@@ -20,7 +20,8 @@ let ruleDefault = {
 	"delayBetween" : 3,
 	"displayPosition" : "Bottom Left",
 	"popupAnimationIn" : "fadeInUp",
-	"popupAnimationOut" : "fadeOutDown"
+	"popupAnimationOut" : "fadeOutDown",
+	"displayOnAllPages" : true
 };
 
 let configurationDefault = {

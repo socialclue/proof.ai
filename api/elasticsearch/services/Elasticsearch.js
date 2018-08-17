@@ -73,7 +73,8 @@ module.exports = {
         displayPosition: 1,
         campaign: 1,
         popupAnimationIn: 1,
-        popupAnimationOut: 1
+        popupAnimationOut: 1,
+        displayOnAllPages: 1
       }
     })
     .lean()

@@ -163,7 +163,8 @@ module.exports = {
         displayTime: 1,
         delayBetween: 1,
         displayPosition: 1,
-        campaign: 1
+        campaign: 1,
+        displayOnAllPages : 1
       }
     })
     .lean()
