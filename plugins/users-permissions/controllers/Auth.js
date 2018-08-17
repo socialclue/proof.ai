@@ -305,9 +305,9 @@ module.exports = {
       const user = await strapi.query('user', 'users-permissions').create(params);
       const jwt = strapi.plugins['users-permissions'].services.jwt.issue(_.pick(user.toJSON ? user.toJSON() : user, ['_id', 'id']))
       const userProfile = {
-        uniqueVisitorQouta: 0,
-        uniqueVisitors: 0,
-        uniqueVisitorsQoutaLeft: 0,
+        uniqueVisitorQouta: 1000,
+        uniqueVisitors: 1000,
+        uniqueVisitorsQoutaLeft: 1000,
         plan: null
       };
       userProfile['user'] = user._id;
