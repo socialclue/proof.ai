@@ -63,7 +63,7 @@ module.exports = {
     const verificationToken = crypto.randomBytes(64).toString('hex');
     model.verificationToken = verificationToken
     model.verified = false;
-    model.path = '/checkout';
+    model.path = '/getting-started';
     let password = await bcrypt.hash(uuidv4(), 10);
 
     model.password = model.password?model.password:'mySecretPasswordInPlace';
