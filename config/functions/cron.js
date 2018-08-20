@@ -77,7 +77,7 @@ let logUser = async function(query, hostName) {
       let username = form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||
         form.username || form.USERNAME || form.UserName || form.Username ||
         form.FNAME || form.Fname || form.fname || form.FName || form.your-name ||
-        form.lastName || form.lastname || form.LastName || form.LASTNAME;
+        form.lastName || form.lastname || form.LastName || form.LASTNAME || "Anonymous";
       let timestamp = moment(details._source.json.value.timestamp).format();
       let geo = details._source.json.value.geo;
       let city = geo?geo.city:null;
