@@ -249,7 +249,7 @@ module.exports = {
             "size": 10,
             "aggs" : {
               "users" : {
-                "terms" : { "field" : "json.value.visitorId", "size" : 10000 },
+                "terms" : { "field" : "@timestamp", "size" : 10000 },
                 "aggs": {
                   "user_docs": {
                     "top_hits": {
