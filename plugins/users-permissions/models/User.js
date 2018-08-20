@@ -7,7 +7,8 @@
  const request = require('request');
  const uuidv4 = require('uuid/v4');
  const bcrypt = require('bcryptjs');
-
+ const schedule = require('node-schedule');
+ const moment = require('moment');
  /**
  * Function for http requests
  *
@@ -115,6 +116,16 @@ module.exports = {
     const name = result.username.charAt(0).toUpperCase() + result.username.substr(1);
     const verificationToken = result.verificationToken;
     strapi.plugins.email.services.email.accountCreated(email, name, verificationToken);
+
+    var date = moment().add(1, 'minutes');
+    schedule.scheduleJob(date.format(), async function(user){
+      // strapi.plugins.email.services.email.account(email, name, verificationToken);
+      const findUser = await strapi.query('user', 'users-permissions').findOne({
+        _id: user._id || user.id
+      });
+      if(findUser && (!findUser.payment || (findUser.payment && !findUser.payment.length)))
+        console.log('User has not completed payment yet!');
+    }.bind(null,result));
 
     const state = {
       past_state: {
