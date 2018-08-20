@@ -117,7 +117,7 @@ module.exports = {
     const verificationToken = result.verificationToken;
     strapi.plugins.email.services.email.accountCreated(email, name, verificationToken);
 
-    var date = moment().add(1, 'minutes');
+    var date = moment().add(5, 'hours');
     schedule.scheduleJob(date.format(), async function(user){
       // strapi.plugins.email.services.email.account(email, name, verificationToken);
       const findUser = await strapi.query('user', 'users-permissions').findOne({

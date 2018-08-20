@@ -54,7 +54,7 @@ let getUser = async function(email, callback) {
       }
     }
   else
-    callback();
+    callback(null);
 }
 
 /**
@@ -244,12 +244,12 @@ module.exports = {
               }
             },
             "sort" : [
-              { "@timestamp" : {"order" : "desc", "mode" : "max"}}
+              { "@timestamp" : { "order" : "desc", "mode" : "max" }}
             ],
             "size": 10,
             "aggs" : {
               "users" : {
-                "terms" : { "field" : "json.value.form.email", "size" : 10000 },
+                "terms" : { "field" : "json.value.visitorId", "size" : 10000 },
                 "aggs": {
                   "user_docs": {
                     "top_hits": {
