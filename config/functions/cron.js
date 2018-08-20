@@ -73,10 +73,10 @@ let logUser = async function(query, hostName) {
       details = details.user_docs.hits.hits[0];
 
       let form = details._source.json.value.form;
-      let email = form.email || form.EMAIL || form.Email;
+      let email = form.email || form.EMAIL || form.Email || form.your-email;
       let username = form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||
         form.username || form.USERNAME || form.UserName || form.Username ||
-        form.FNAME || form.Fname || form.fname || form.FName ||
+        form.FNAME || form.Fname || form.fname || form.FName || form.your-name ||
         form.lastName || form.lastname || form.LastName || form.LASTNAME;
       let timestamp = moment(details._source.json.value.timestamp).format();
       let geo = details._source.json.value.geo;
