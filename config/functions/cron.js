@@ -35,23 +35,26 @@
 **/
 let getUser = async function(email, callback) {
   let userDetail;
-  try {
-    await strapi.services.enrichment.picasaWeb(email).then(res=>{
-      callback(null, res);
-    });
-  } catch(err) {
+  if(email)
     try {
-      await strapi.services.enrichment.gravatr(email).then(res => {
+      await strapi.services.enrichment.picasaWeb(email).then(res=>{
         callback(null, res);
       });
     } catch(err) {
-      var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      userDetail = {
-        username: re.test(email)?email.replace(/@.*$/,""):'Anonymous'
-      };
-      callback(null, userDetail);
+      try {
+        await strapi.services.enrichment.gravatr(email).then(res => {
+          callback(null, res);
+        });
+      } catch(err) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        userDetail = {
+          username: re.test(email)?email.replace(/@.*$/,""):'Anonymous'
+        };
+        callback(null, userDetail);
+      }
     }
-  }
+  else
+    callback();
 }
 
 /**
@@ -71,6 +74,10 @@ let logUser = async function(query, hostName) {
 
       let form = details._source.json.value.form;
       let email = form.email || form.EMAIL || form.Email;
+      let username = form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||
+        form.username || form.USERNAME || form.UserName || form.Username ||
+        form.FNAME || form.Fname || form.fname || form.FName ||
+        form.lastName || form.lastname || form.LastName || form.LASTNAME;
       let timestamp = moment(details._source.json.value.timestamp).format();
       let geo = details._source.json.value.geo;
       let city = geo?geo.city:null;
@@ -83,6 +90,7 @@ let logUser = async function(query, hostName) {
 
       let userDetail = {
         email: email,
+        username: username,
         timestamp: timestamp,
         city: city,
         country: country,
@@ -99,8 +107,8 @@ let logUser = async function(query, hostName) {
       await getUser(user.email, (err, userDetail) => {
         if(err)
           throw err;
-        else {
-          user['username'] = userDetail.username;
+        else if(userDetail) {
+          user['username'] = user.username ? user.username : userDetail.username;
           user['profile_pic'] = userDetail.profile_pic;
         }
 
@@ -230,8 +238,8 @@ module.exports = {
                         "lt" :  "now+1d"
                       }
                     }
-                  },
-                  { "exists" : { "field" : "json.value.form.email" }}
+                  }
+                  // { "exists" : { "field" : "json.value.form.email" }}
                 ]
               }
             },
