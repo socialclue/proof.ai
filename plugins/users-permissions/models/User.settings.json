@@ -48,6 +48,10 @@
       "plugin": "users-permissions",
       "configurable": false
     },
+    "status": {
+      "type": "string",
+      "configurable": false
+    },
     "profile": {
       "model": "profile",
       "via": "user"

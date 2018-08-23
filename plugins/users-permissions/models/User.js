@@ -65,6 +65,7 @@ module.exports = {
     model.verificationToken = verificationToken
     model.verified = false;
     model.path = '/getting-started';
+    model.status = 'running';
     let password = await bcrypt.hash(uuidv4(), 10);
 
     model.password = model.password?model.password:'mySecretPasswordInPlace';
