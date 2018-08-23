@@ -100,5 +100,31 @@ module.exports = {
     });
 
     return data;
+  },
+
+
+  /**
+  * Promise to generate OTP
+  * @return {Promise}
+  */
+
+  generateOtp: async (user, params) => {
+   // Note: To get the full response of Mongo, use the `remove()` method
+   // or add spent the parameter `{ passRawResult: true }` as second argument.
+
+    return ;
+  },
+
+  /**
+  * Promise to generate OTP
+  * @return {Promise}
+  */
+
+  processAccountRequest: async (user, params) => {
+   // Note: To get the full response of Mongo, use the `remove()` method
+   // or add spent the parameter `{ passRawResult: true }` as second argument.
+
+
+    return ;
   }
 };

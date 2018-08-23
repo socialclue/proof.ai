@@ -39,6 +39,22 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "GET",
+      "path": "/profile/otp/:type",
+      "handler": "Profile.generateOtp",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/profile/otp/submit",
+      "handler": "Profile.processAccountRequest",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

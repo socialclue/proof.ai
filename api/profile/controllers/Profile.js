@@ -89,5 +89,21 @@ module.exports = {
 
     // Send 200 `ok`
     ctx.send(data);
+  },
+
+  generateOtp: async (ctx, next) => {
+    const user = ctx.state.user;
+    const data = await strapi.services.profile.generateOtp(user, ctx.params);
+
+    // Send 200 `ok`
+    ctx.send(data);
+  },
+
+  processAccountRequest: async (ctx, next) => {
+    const user = ctx.state.user;
+    const data = await strapi.services.profile.processAccountRequest(user, ctx.params);
+
+    // Send 200 `ok`
+    ctx.send(data);
   }
 };
