@@ -101,7 +101,7 @@ module.exports = {
 
   processAccountRequest: async (ctx, next) => {
     const user = ctx.state.user;
-    const data = await strapi.services.profile.processAccountRequest(user, ctx.params);
+    const data = await strapi.services.profile.processAccountRequest(user, ctx.request.body);
 
     // Send 200 `ok`
     ctx.send(data);
