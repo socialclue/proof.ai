@@ -129,7 +129,7 @@ module.exports = {
    // or add spent the parameter `{ passRawResult: true }` as second argument.
     const isValid = otplib.authenticator.check(body.otpCode, secret);
 
-    if(isValid) {
+    if(isValid && (body.type == 'pause' || body.type == 'running')) {
       const userParams = {
         id: user._id
       };
@@ -138,6 +138,13 @@ module.exports = {
         status: body.type == "pause"?"paused":body.type=="running"?"running":"deleted"
       };
       await strapi.plugins['users-permissions'].services.user.edit(userParams, userValues);
+    } else if(isValid && body.type == 'delete') {
+
+      const userParams = {
+        id: user._id
+      };
+
+      await strapi.plugins['users-permissions'].services.user.remove(userParams, user);
     }
 
     return { code: isValid, error: false, status: 200 } ;
