@@ -498,8 +498,9 @@ module.exports = {
    * @param limit
    * @returns {Promise<*>}
    */
-  accountRequest: async (email, name, code, type) =>  {
-        const mailSub = `Account ${type}`;
+  accountRequest: async (email, name, code, requestType) =>  {
+      const type = requestType.charAt(0).toUpperCase() + requestType.slice(1)
+        const mailSub = `Account ${type} Request`;
         const content =`
           <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
             <tr>
@@ -513,22 +514,6 @@ module.exports = {
                   <div>Your one time password is ${code}.</div>
               </td>
             </tr>
-          </table>
-          <table border="0" cellPadding="0" cellSpacing="0" class="module" data-role="module-button" data-type="button" role="module" style="table-layout:fixed" width="100%">
-            <tbody>
-              <tr>
-                <td align="center" class="outer-td" style="padding:0px 0px 0px 0px">
-                  <table border="0" cellPadding="0" cellSpacing="0" class="button-css__deep-table___2OZyb wrapper-mobile" style="text-align:left">
-                    <tbody>
-                      <tr>
-                        <td align="center" bgcolor="#097fff" class="inner-td" style="border-radius:6px;font-size:16px;text-align:center;background-color:inherit"><a style="background-color:#097fff;border:1px solid #333333;border-color:#097fff;border-radius:5px;border-width:1px;color:#ffffff;display:inline-block;font-family:arial,helvetica,sans-serif;font-size:16px;font-weight:normal;letter-spacing:0px;line-height:16px;padding:12px 18px 12px 18px;text-align:center;text-decoration:none" href="https://useinfluence.co/login" target="_blank">Login</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-            </tbody>
           </table>
           <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
             <tr>

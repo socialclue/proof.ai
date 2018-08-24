@@ -8,6 +8,8 @@
 
 // Public dependencies.
 const _ = require('lodash');
+const otplib =  require('otplib');
+const secret = 'HSGDHGSJHDBJDYIDUAHJAHDUDHSUDHJSDHJK'
 
 module.exports = {
 
@@ -111,8 +113,11 @@ module.exports = {
   generateOtp: async (user, params) => {
    // Note: To get the full response of Mongo, use the `remove()` method
    // or add spent the parameter `{ passRawResult: true }` as second argument.
-
-    return ;
+    console.log('token', '=================');
+    const token = await otplib.authenticator.generate(secret);
+    console.log(token, '=================');
+    await strapi.plugins.email.services.email.accountRequest('shankyrana@hotmail.com', user.username, token, params.type);
+    return { error: false, status: 200, msg: 'Mail sent' };
   },
 
   /**
