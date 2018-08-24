@@ -488,5 +488,69 @@ module.exports = {
       html: mytemp
     };
     return send(mailOptions);
-  }
+  },
+
+
+  /**
+   * Account Pause and delete mail.
+   * @param email
+   * @param name
+   * @param limit
+   * @returns {Promise<*>}
+   */
+  accountRequest: async (email, name, code, type) =>  {
+        const mailSub = `Account ${type}`;
+        const content =`
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                  <div>Hey ${name},</div>
+                  <div>&nbsp;</div>
+                  <div>This is a confirmation email to let you know that you have requested to ${type} your account.</div>
+                  <div>Your one time password is ${code}.</div>
+              </td>
+            </tr>
+          </table>
+          <table border="0" cellPadding="0" cellSpacing="0" class="module" data-role="module-button" data-type="button" role="module" style="table-layout:fixed" width="100%">
+            <tbody>
+              <tr>
+                <td align="center" class="outer-td" style="padding:0px 0px 0px 0px">
+                  <table border="0" cellPadding="0" cellSpacing="0" class="button-css__deep-table___2OZyb wrapper-mobile" style="text-align:left">
+                    <tbody>
+                      <tr>
+                        <td align="center" bgcolor="#097fff" class="inner-td" style="border-radius:6px;font-size:16px;text-align:center;background-color:inherit"><a style="background-color:#097fff;border:1px solid #333333;border-color:#097fff;border-radius:5px;border-width:1px;color:#ffffff;display:inline-block;font-family:arial,helvetica,sans-serif;font-size:16px;font-weight:normal;letter-spacing:0px;line-height:16px;padding:12px 18px 12px 18px;text-align:center;text-decoration:none" href="https://useinfluence.co/login" target="_blank">Login</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                <div>Thanks for investing your faith in us.</div>
+                <div>See you soon.</div>
+              </td>
+            </tr>
+          </table>
+        `;
+
+        var mytemp = template.commontemp(mailSub, name, content);
+
+        let mailOptions = {
+          from: 'noreply@useinfluence.co',
+          to: email,
+          subject: mailSub,
+          html: mytemp
+        };
+        return send(mailOptions);
+    },
 };
