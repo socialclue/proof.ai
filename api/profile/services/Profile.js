@@ -133,7 +133,8 @@ module.exports = {
       const userParams = {
         id: user._id
       };
-
+      if(body.type == "pause")
+        await Campaign.update({profile: user.profile}, {$set: { isActive: false }}, { multi: true });
       const userValues = {
         status: body.type == "pause"?"paused":body.type=="running"?"running":"deleted"
       };
