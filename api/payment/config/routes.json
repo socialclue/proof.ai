@@ -89,6 +89,14 @@
       }
     },
     {
+      "method": "GET",
+      "path": "/payment/servicebot/card",
+      "handler": "Payment.fetchCards",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "DELETE",
       "path": "/payment/:_id",
       "handler": "Payment.destroy",

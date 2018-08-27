@@ -320,6 +320,39 @@ module.exports = {
 
 
   /**
+   * Promise to fetch servicebot payment cards.
+   *
+   * @return {Promise}
+   */
+
+  fetchCards: async (user) => {
+    var card_details;
+    // retrieve auth token for logged in user from service bot
+    var auth_token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: user.email, password: user.password }});
+
+    /**
+    *	Add new card to the servicebot
+    *
+    *@return {Promise}
+    */
+    if(auth_token) {
+      card_details = await doRequest({
+        method: 'GET',
+        url:'https://servicebot.useinfluence.co/api/v1/funds/own',
+        headers: {
+          Authorization: 'JWT ' + JSON.parse(auth_token).token,
+          'Content-Type': 'application/json'
+        }
+      });
+      if(card_details.error)
+        return { err: true, message: add_funds.message };
+    } else {
+      return { message: "user not found", err: true };
+    }
+    return JSON.parse(card_details); //return updated card details
+  },
+
+  /**
    * Promise to cancel a/an servicebot payment subscription.
    *
    * @return {Promise}
