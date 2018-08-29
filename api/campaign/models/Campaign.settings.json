@@ -13,6 +13,10 @@
       "type": "string",
       "multiple": false
     },
+    "campaignType": {
+      "type": "string",
+      "multiple": false
+    },
     "logTime": {
       "type": "date",
       "multiple": false
