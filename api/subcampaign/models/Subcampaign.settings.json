@@ -50,6 +50,10 @@
     "journey": {
       "type": "json",
       "multiple": false
+    },
+    "productImage": {
+      "type": "string",
+      "multiple": false
     }
   }
 }
