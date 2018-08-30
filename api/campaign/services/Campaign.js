@@ -189,10 +189,12 @@ module.exports = {
    * @return {Promise}
    */
   add: async (values) => {
-		values.websiteUrl = values.websiteUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
-		values.isActive = true;
+		let campaignValue = values.campaign;
+		let pagesValues = values.pages;
+		campaignValue.websiteUrl = campaignValue.websiteUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
+		campaignValue.isActive = true;
     var checkDomain = new Promise((resolve, reject) => {
-      domainPing(values.websiteUrl)
+      domainPing(campaignValue.websiteUrl)
        .then((res) => {
            resolve(res);
        })
@@ -217,7 +219,7 @@ module.exports = {
     if(dom.error) {
       return dom;
     } else {
-			const data = await Campaign.create(values);
+			const data = await Campaign.create(campaignValue);
 
 			/**
 			* Find Notificationtypes and create new configuration for campaign related to notificationType
@@ -434,9 +436,24 @@ module.exports = {
       });
       let newRules = ruleDefault;
 			newRules['campaign'] = data._id;
-			await Rules.create(newRules, (err, result) => {
+			await Rules.create(newRules, async (err, result) => {
 				if(err)
           return err;
+				else {
+					await pagesValues.map(async page => {
+						const pages = {
+				      name: page.productName,
+				      productName: page.productName,
+				      productUrl: page.productUrl,
+				      captureUrl: page.captureUrl,
+				      campaign: data._id,
+				      domain: data.websiteUrl,
+				      rule: result._id,
+				      isActive: true
+				    };
+						const savedPage = await strapi.services.subcampaign.add(pages);
+					});
+				}
       });
       return data; // return new campaign
     }
