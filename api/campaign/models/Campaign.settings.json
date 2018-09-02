@@ -66,6 +66,10 @@
     "webhooks": {
       "model": "webhooks"
     },
+    "health": {
+      "type": "string",
+      "multiple": false
+    },
     "shopify": {
       "type": "json",
       "multiple": false
