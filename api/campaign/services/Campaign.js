@@ -193,6 +193,8 @@ module.exports = {
 		let pagesValues = values.pages;
 		campaignValue.websiteUrl = campaignValue.websiteUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
 		campaignValue.isActive = true;
+		campaignValue.health = 'bad';
+		
     var checkDomain = new Promise((resolve, reject) => {
       domainPing(campaignValue.websiteUrl)
        .then((res) => {
