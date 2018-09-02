@@ -53,4 +53,16 @@ module.exports = {
     ctx.created(data);
   },
 
+  /**
+   * Retrieve access token and add script.
+   *
+   * @return {Object}
+   */
+
+  access_token: async (ctx) => {
+    const data = await strapi.services.oauth.access_token(ctx.request.body, ctx.request.params);
+
+    // Send 201 `created`
+    ctx.created(data);
+  },
 };

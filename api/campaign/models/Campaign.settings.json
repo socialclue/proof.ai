@@ -65,6 +65,10 @@
     },
     "webhooks": {
       "model": "webhooks"
+    },
+    "shopify": {
+      "type": "json",
+      "multiple": false
     }
   }
 }
