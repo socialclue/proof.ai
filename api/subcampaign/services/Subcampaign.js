@@ -97,7 +97,7 @@ module.exports = {
     	"visitorText" : "people",
     	"notificationUrl" : "",
     	"toggleMap" : true,
-      otherText: "purcashed "
+      "otherText": "buyers recently purchased "
     };
 
     values['live'] = {
@@ -142,15 +142,15 @@ module.exports = {
         "recentConv" : 5,
         "hideAnonymousConversion" : true,
         "onlyDisplayNotification" : false,
-        liveVisitorCount: 0,
-        liveVisitorText: `are viewing ${values.productName}`
+        "liveVisitorCount": 0,
+        "liveVisitorText": `are viewing ${values.productName}`
       },
       "contentText" : 'Influence',
     	"visitorText" : "people",
     	"notificationUrl" : "",
     	"toggleMap" : true,
       "otherText" : "purchased ",
-      "liveVisitorText": `are viewing ${values.productName}`
+      "liveVisitorText": `buyers are viewing this ${values.productName}`
     }
 
     values['journey'] = {
@@ -208,7 +208,7 @@ module.exports = {
     	"notificationUrl" : "",
     	"toggleMap" : true,
       "liveVisitorCount": 0,
-      "otherText": "bought this product"
+      "otherText": "Recently purchased"
     }
 
     const displayLead = {
