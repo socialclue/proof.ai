@@ -128,6 +128,41 @@ let logUser = async function(query, hostName) {
   }
 }
 
+/**
+*Tetsing health of users campaign
+**/
+let healthTest = async function(campaign, displayLeads, captureLeads) {
+  let health;
+  let query = {
+    index: index,
+    body: {
+      query: {
+        "bool": {
+          "must": [
+            { "match": { "json.value.trackingId":  trackingId }}
+          ]
+        }
+      },
+      "size": 1
+    }
+  };
+
+  const response = await new Promise((resolve, reject) => {
+    client.search(query, function (err, resp, status) {
+      if (err) reject(err);
+      else resolve(resp);
+    });
+  });
+
+  if(response.hits && response.hits.hits.length) {
+    health = 'good';
+  } else {
+    health = 'bad';
+  }
+
+  await Campaign.update({_id: campaign._id}, {$set: { health: health}});
+}
+
 module.exports = {
 
   /**
@@ -203,14 +238,19 @@ module.exports = {
         websiteUrl: 1,
         logTime: 1,
         rule: 1,
-        trackingId: 1
+        trackingId: 1,
+        health: 1
       }
     )
     .lean()
     .exec()
     .then(async campaigns => {
       await campaigns.map(async campaign => {
-        let captureLeads = await strapi.api.notificationpath.services.notificationpath.findRulesPath({_id: campaign.rule, type: 'lead'});
+        let Leads = await strapi.api.notificationpath.services.notificationpath.findRulesPath({_id: campaign.rule});
+        let displayLeads, captureLeads;
+        displayLeads = Leads.filter(lead => lead.type == 'display');
+        displayLeads = displayLeads.map(lead => lead.url);
+        captureLeads = Leads.filter(lead => lead.type == 'lead');
         captureLeads = captureLeads.map(lead => lead.url);
 
         /**
@@ -218,6 +258,11 @@ module.exports = {
         **/
         // if(!campaign.isActive)
         //   await strapi.plugins.email.services.email.campaignIssue(email, name, campaign);
+
+        /**
+        *Health test
+        **/
+        await healthTest(campaign, displayLeads, captureLeads);
 
         /**
         *query to search user not logged

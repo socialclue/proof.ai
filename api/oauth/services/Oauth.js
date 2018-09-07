@@ -10,8 +10,32 @@
 const _ = require('lodash');
 var oauth2orize = require('oauth2orize')
 var jwt = require('jwt-simple');
+const request = require('request');
 
 var server = oauth2orize.createServer();
+
+
+/**
+* Function for http requests
+*
+*@param{{method, url, headers, form}}
+*@return {Promise}
+*/
+function doRequest(options) {
+ return new Promise(function (resolve, reject) {
+   request(options , function (error, res, body) {
+     if(res && res.statusCode >= 400) {
+       return resolve({error: true, message: body});
+     }
+     const response = typeof body === 'string'? JSON.parse(body) : body;
+     if (!error && res.statusCode == 200 || (response && !response.error)) {
+       resolve(body);
+     } else {
+       reject(error || (response && response.error?response.error:''));
+     }
+   });
+ });
+}
 
 // Register serialialization function
 server.serializeClient(function(client, callback) {
@@ -127,6 +151,64 @@ module.exports = {
 
   token: async () => {
     return server.token();
-  }
+  },
 
+  /**
+   * Retrieve access token and add script.
+   *
+   * @return {Promise}
+   */
+
+  access_token: async (body, params) => {
+    const CampaignData = await Campaign.findOne({trackingId: body.trackingId});
+    if(CampaignData.shopify) {
+      return { message: 'You have already integrated with Shopify', error: false };
+    } else {
+      const requestBody = {
+        code: body.requestBody.code,
+        client_secret: body.requestBody.client_secret,
+        client_id: body.requestBody.client_id
+      };
+      const data = await doRequest({method: 'POST', url: body.requestURL, form: requestBody});
+      //retrieve auth token for new user
+      if(!data.error) {
+        const access_token = JSON.parse(data).access_token;
+
+        var accessAPI = await doRequest({
+          method: 'POST',
+          url:`https://${body.shopLink}/admin/script_tags.json`,
+          headers: {
+            'X-Shopify-Access-Token': access_token,
+            'Content-Type': 'application/json'
+          },
+          form: {
+            "script_tag": {
+              "event": "onload",
+              "src": `https://storage.googleapis.com/influence-197607.appspot.com/influence-analytics.js?trackingId=${body.trackingId}`
+            }
+          }
+        });
+
+        const script_tag = JSON.parse(accessAPI);
+        await Campaign.update(
+          {
+            trackingId: body.trackingId
+          }, {
+            $set:
+            {
+              shopify: {
+                access_token,
+                scriptId: script_tag.id
+              }
+            }
+          }, {
+            new: true
+          }
+        );
+        return {error: false, message: 'Script added to Shopify'};
+      } else {
+        return {error: true, message: 'Invalid Access'}
+      }
+    }
+  }
 };

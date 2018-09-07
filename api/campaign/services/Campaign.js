@@ -9,7 +9,7 @@
 // Public dependencies.
 const _ = require('lodash');
 const domainPing = require("domain-ping");
-
+	
 let ruleDefault = {
 	"hideNotification" : true,
 	"loopNotification" : true,
@@ -193,6 +193,8 @@ module.exports = {
 		let pagesValues = values.pages;
 		campaignValue.websiteUrl = campaignValue.websiteUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
 		campaignValue.isActive = true;
+		campaignValue.health = 'bad';
+
     var checkDomain = new Promise((resolve, reject) => {
       domainPing(campaignValue.websiteUrl)
        .then((res) => {
@@ -455,7 +457,8 @@ module.exports = {
 					});
 				}
       });
-      return data; // return new campaign
+
+			return data; // return new campaign
     }
   },
 
@@ -469,8 +472,11 @@ module.exports = {
     // Note: The current method will return the full response of Mongo.
     // To get the updated object, you have to execute the `findOne()` method
     // or use the `findOneOrUpdate()` method with `{ new:true }` option.
-  try{return Campaign.findOneAndUpdate(params, values, { upsert: false, multi: true, new: true }).populate('webhooks').populate('profile');}
-	catch(err){console.log(err)}
+	  try {
+			return Campaign.findOneAndUpdate(params, values, { upsert: false, multi: true, new: true }).populate('webhooks').populate('profile');
+		} catch(err) {
+			console.log(err);
+		}
   },
 
   /**
@@ -482,7 +488,7 @@ module.exports = {
   remove: async params => {
     // Note: To get the full response of Mongo, use the `remove()` method
     // or add spent the parameter `{ passRawResult: true }` as second argument.
-    try{
+    try {
 			const data = await Campaign.findOneAndRemove(params, {})
       .populate(_.keys(_.groupBy(_.reject(strapi.models.campaign.associations, {autoPopulate: false}), 'alias')).join(' '));
 
@@ -494,7 +500,7 @@ module.exports = {
 	        search
 	     	);
     	});
-		} catch(err){
+		} catch(err) {
 			console.log(err);
 		}
     return data;

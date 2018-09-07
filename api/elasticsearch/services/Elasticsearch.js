@@ -146,7 +146,7 @@ module.exports = {
 
     await subcampaigns.map(subcampaign => {
       configurations.push({
-        paths: [subcampaign.captureUrl],
+        paths: [subcampaign.productUrl],
         configuration: subcampaign[type]
       });
     });
