@@ -39,24 +39,22 @@ module.exports = {
    * @param attempts
    * @returns {Promise<void>}
    */
-  createJob: async (jobName, jobTitle, jobDescription, priority, attempts) => {
+  createJob: async (jobName, jobTitle, jobDescription, jobValue, priority, attempts, done) => {
     q.create(jobName,{
         title: jobTitle,
-        description: jobDescription
+        description: jobDescription,
+        value: jobValue
     }).priority(priority).attempts(attempts).save(function( err ) {
-      if (!err) console.log( err);
+      if (!err) done(err);
+      else done();
     });
   },
 
 
-  processJobs: async (jobName, values, number, fn) => {
+  processJobs: async (jobName, number, fn) => {
     q.process(jobName, number, function(values, done ) {
-      fn(values,done);
-    })
+      fn(values.data.value, done);
+    });
   }
 
-
 };
-
-
-
