@@ -1,6 +1,14 @@
 {
   "routes": [
     {
+      "method": "POST",
+      "path": "/ws/log",
+      "handler": "Websocket.log",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "GET",
       "path": "/ws/health",
       "handler": "Websocket.health",

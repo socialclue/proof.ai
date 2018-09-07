@@ -247,6 +247,7 @@ module.exports = {
     .then(async campaigns => {
       await campaigns.map(async campaign => {
         let Leads = await strapi.api.notificationpath.services.notificationpath.findRulesPath({_id: campaign.rule});
+        let displayLeads, captureLeads;
         displayLeads = Leads.filter(lead => lead.type == 'display');
         displayLeads = displayLeads.map(lead => lead.url);
         captureLeads = Leads.filter(lead => lead.type == 'lead');
