@@ -1,5 +1,10 @@
 {
   "myCustomConfiguration": "This configuration is accessible through strapi.config.myCustomConfiguration",
   "socketsServerPath": "/web",
-  "elasticsearchNode": "elasticsearch:9200"
+  "elasticsearchNode": "elasticsearch:9200",
+  "redisPort":"6379",
+  "redisHost":"some-redis",
+  "redisPassword":"",
+  "redisDb":"3"
+
 }
