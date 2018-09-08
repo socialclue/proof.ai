@@ -129,6 +129,19 @@ module.exports = {
   },
 
   /**
+   * fetch user's servicebot card details.
+   *
+   * @return {Object}
+   */
+
+  fetchCards: async (ctx, next) => {
+    const data = await strapi.services.payment.fetchCards(ctx.state.user) ;
+
+    // Send 200 `ok`
+    ctx.send(data);
+  },
+
+  /**
    * Cancel a/an payment subscription servicebot.
    *
    * @return {Object}

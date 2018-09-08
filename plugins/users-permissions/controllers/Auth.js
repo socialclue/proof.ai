@@ -12,6 +12,7 @@ const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
 
 module.exports = {
   callback: async (ctx) => {
+    console.log(ctx.request.body);
     const provider = ctx.params.provider || 'local';
     const params = ctx.request.body;
     const store = await strapi.store({
@@ -304,21 +305,21 @@ module.exports = {
       const user = await strapi.query('user', 'users-permissions').create(params);
       const jwt = strapi.plugins['users-permissions'].services.jwt.issue(_.pick(user.toJSON ? user.toJSON() : user, ['_id', 'id']))
       const userProfile = {
-        uniqueVisitorQouta: 0,
-        uniqueVisitors: 0,
-        uniqueVisitorsQoutaLeft: 0,
+        uniqueVisitorQouta: 1000,
+        uniqueVisitors: 1000,
+        uniqueVisitorsQoutaLeft: 1000,
         plan: null
       };
       userProfile['user'] = user._id;
       const createProfile = await strapi.services.profile.add(userProfile);
       // Send verification mail to user
       // TODO: Update verification link and token generation technique
-      try {
-        const mailResponse = await strapi.controllers.mail.registered(user.email, jwt);
-        strapi.log.info(mailResponse);
-      } catch(err) {
-        strapi.log.error(err);
-      }
+      // try {
+      //   const mailResponse = await strapi.controllers.mail.registered(user.email, jwt);
+      //   strapi.log.info(mailResponse);
+      // } catch(err) {
+      //   strapi.log.error(err);
+      // }
 
       ctx.send({
         user: _.omit(user.toJSON ? user.toJSON() : user, ['password', 'resetPasswordToken']),

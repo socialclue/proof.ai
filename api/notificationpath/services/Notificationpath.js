@@ -9,6 +9,16 @@
 // Public dependencies.
 const _ = require('lodash');
 
+let validatePath = async function(index, trackingId, path, callback) {
+ try {
+   await strapi.services.elasticsearch.validatePath(index, trackingId, path).then(res=>{
+     callback(null, res);
+   });
+ } catch(err) {
+   callback(err);
+ }
+}
+
 module.exports = {
 
   /**
@@ -35,15 +45,34 @@ module.exports = {
    * @return {Promise}
    */
 
-  findRulesPath: (params) => {
+  findRulesPath: async (params) => {
     const query = {
       rule: params._id,
-      type: params.type
+      type: params.type,
     };
 
     const convertedParams = strapi.utils.models.convertParams('notificationpath', query);
 
-    return Notificationpath
+    const campaign = await Campaign.findOne({rule: params._id});
+
+    let notificationPaths = await Notificationpath
+      .find()
+      .where(convertedParams.where)
+      .sort(convertedParams.sort)
+      .skip(convertedParams.start)
+      .limit(convertedParams.limit)
+      .populate(_.keys(_.groupBy(_.reject(strapi.models.notificationpath.associations, {autoPopulate: false}), 'alias')).join(' '));
+
+    notificationPaths = await notificationPaths.map(async path => {
+      return await validatePath('filebeat-*', campaign.trackingId, path.url, (err, pathResponse) => {
+        if(pathResponse && pathResponse.hits && pathResponse.hits.total > 0) {
+          Notificationpath.update({_id: path._id}, {$set:{status:'primary'}});
+        }
+      });
+    })
+
+
+    return await Notificationpath
       .find()
       .where(convertedParams.where)
       .sort(convertedParams.sort)
@@ -58,6 +87,7 @@ module.exports = {
    */
 
   fetch: (params) => {
+
     return Notificationpath
       .findOne(_.pick(params, _.keys(Notificationpath.schema.paths)))
       .populate(_.keys(_.groupBy(_.reject(strapi.models.notificationpath.associations, {autoPopulate: false}), 'alias')).join(' '));
@@ -70,6 +100,20 @@ module.exports = {
    */
 
   add: async (values) => {
+    const campaign = await Campaign.findOne({rule: values.rule});
+    let response;
+
+    if(campaign)
+      await validatePath('filebeat-*', campaign.trackingId, values.url, (err, pathResponse) => {
+        if(!err)
+          response = pathResponse;
+      });
+
+    if(response && response.hits && response.hits.total > 0)
+      values['status'] = 'primary';
+    else
+      values['status'] = 'unverified';
+
     const data = await Notificationpath.create(values);
     return data;
   },
@@ -84,7 +128,7 @@ module.exports = {
     // Note: The current method will return the full response of Mongo.
     // To get the updated object, you have to execute the `findOne()` method
     // or use the `findOneOrUpdate()` method with `{ new:true }` option.
-    await strapi.hook.mongoose.manageRelations('notificationpath', _.merge(_.clone(params), { values }));
+    //await strapi.hook.mongoose.manageRelations('notificationpath', _.merge(_.clone(params), { values }));
     return Notificationpath.update(params, values, { multi: true });
   },
 

@@ -8,7 +8,19 @@
  * [MINUTE] [HOUR] [DAY OF MONTH] [MONTH OF YEAR] [DAY OF WEEK] [YEAR (optional)]
  */
 
-let getUniqueUsers = async function(index, trackingId, callback) {
+ // Public dependencies.
+ const elasticsearch = require('elasticsearch');
+ const moment = require('moment');
+ const uuidv1 = require('uuid/v1');
+
+ const client = elasticsearch.Client({
+   host: '35.202.85.190:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
+   requestTimeout: Infinity, // Tested
+   keepAlive: true, // Tested
+   log: 'trace'
+ });
+
+ let getUniqueUsers = async function(index, trackingId, callback) {
   try {
     await strapi.services.elasticsearch.getAllUniqueUsers(index, trackingId).then(res=>{
       callback(null, res);
@@ -18,14 +30,48 @@ let getUniqueUsers = async function(index, trackingId, callback) {
   }
 }
 
+/**
+*Tetsing health of users campaign
+**/
+let healthTest = async function(campaign, displayLeads, captureLeads) {
+  let health;
+  let query = {
+    index: index,
+    body: {
+      query: {
+        "bool": {
+          "must": [
+            { "match": { "json.value.trackingId":  trackingId }}
+          ]
+        }
+      },
+      "size": 1
+    }
+  };
+
+  const response = await new Promise((resolve, reject) => {
+    client.search(query, function (err, resp, status) {
+      if (err) reject(err);
+      else resolve(resp);
+    });
+  });
+
+  if(response.hits && response.hits.hits.length) {
+    health = 'good';
+  } else {
+    health = 'bad';
+  }
+
+  await Campaign.update({_id: campaign._id}, {$set: { health: health}});
+}
+
 module.exports = {
 
   /**
-   * Simple example.
-   * Every monday at 1am.
-   */
-
-  '* 0 * * *': () => {
+   * Cron for updating users unique visitors
+   * Every minute.
+  **/
+  '1 * * * * *': () => {
     Campaign
     .find({ isActive: true })
     .populate({
@@ -45,25 +91,25 @@ module.exports = {
         let usersUniqueVisitors = profile.uniqueVisitors;
         let uniqueVisitorQouta = profile.uniqueVisitorQouta;
         let uniqueVisitorsQoutaLeft = profile.uniqueVisitorsQoutaLeft;
-        let response ;
+        let response;
         //'INF-406jkjiji00uszj' for testing
         //campaign.trackingId original
         await getUniqueUsers('filebeat-*', campaign.trackingId, (err, usersUnique) => {
-					if(!err) {
+					if(!err)
 						response = usersUnique;
-					}
 				});
 
         let campaignOption, profileOption, campaignUniqueVisitors = 0;
-        if(response.aggregations.users.buckets.length) {
+        if(response && response.aggregations.users.buckets.length)
           response.aggregations.users.buckets.map(bucket => {
-            campaignUniqueVisitors = campaignUniqueVisitors + bucket.visitors.buckets.length + bucket.visitors.sum_other_doc_count
+            campaignUniqueVisitors = campaignUniqueVisitors + bucket.visitors.buckets.length + bucket.visitors.sum_other_doc_count;
           });
-        } else
+        else
           campaignUniqueVisitors = 0;
 
-        usersUniqueVisitors = usersUniqueVisitors - campaign.uniqueVisitors + campaignUniqueVisitors;
+        usersUniqueVisitors = usersUniqueVisitors - campaign.uniqueVisitors?campaign.uniqueVisitors:0 + campaignUniqueVisitors;
         uniqueVisitorsQoutaLeft = uniqueVisitorQouta - usersUniqueVisitors;
+
         if(uniqueVisitorsQoutaLeft <= 0) {
           campaignOption = { uniqueVisitors: campaignUniqueVisitors, isActive: false };
           profileOption = { uniqueVisitors: usersUniqueVisitors, uniqueVisitorsQoutaLeft: 0  };
@@ -79,5 +125,49 @@ module.exports = {
         await Profile.update({_id: profile._id}, {$set: profileOption });
       });
     });
+  },
+
+  /**
+   * Corn for logging new users
+   * Runs every minute
+  **/
+  '1 * * * * *': () => {
+    Campaign.find(
+      {},
+      {
+        log: 1,
+        campaignName: 1,
+        websiteUrl: 1,
+        logTime: 1,
+        rule: 1,
+        trackingId: 1,
+        health: 1
+      }
+    )
+    .lean()
+    .exec()
+    .then(async campaigns => {
+      await campaigns.map(async campaign => {
+        let Leads = await strapi.api.notificationpath.services.notificationpath.findRulesPath({_id: campaign.rule});
+        let displayLeads, captureLeads;
+        displayLeads = Leads.filter(lead => lead.type == 'display');
+        displayLeads = displayLeads.map(lead => lead.url);
+        captureLeads = Leads.filter(lead => lead.type == 'lead');
+        captureLeads = captureLeads.map(lead => lead.url);
+
+        /**
+        *Mail support if campaign id in active/not logging data
+        **/
+        // if(!campaign.isActive)
+        //   await strapi.plugins.email.services.email.campaignIssue(email, name, campaign);
+
+        /**
+        *Health test
+        **/
+        await healthTest(campaign, displayLeads, captureLeads);
+
+      });
+    });
   }
+
 };

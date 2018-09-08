@@ -3,5 +3,10 @@
   "socketsServerPath": "/web",
   "elasticsearchNode": "elasticsearch:9200",
   "GOOGLE_APPLICATION_CREDENTIALS":"/Users/saranshsharma/WebstormProjects/influence.io/creds.json",
-  "projectID":"influence-197607"
+  "projectID":"influence-197607",
+  "redisPort":"6379",
+  "redisHost":"some-redis",
+  "redisPassword":"",
+  "redisDb":"3"
+
 }

@@ -8,6 +8,8 @@
 
 // Public dependencies.
 const _ = require('lodash');
+const otplib =  require('otplib');
+const secret = 'HSGDHGSJHDBJDYIDUAHJAHDUDHSUDHJSDHJK'
 
 module.exports = {
 
@@ -59,6 +61,8 @@ module.exports = {
 
   add: async (values) => {
     const data = await Profile.create(values);
+    if(data._id)
+      await State.update({user: values.user}, {profile: data._id});
     return data;
   },
 
@@ -98,5 +102,52 @@ module.exports = {
     });
 
     return data;
+  },
+
+
+  /**
+  * Promise to generate OTP
+  * @return {Promise}
+  */
+
+  generateOtp: async (user, params) => {
+   // Note: To get the full response of Mongo, use the `remove()` method
+   // or add spent the parameter `{ passRawResult: true }` as second argument.
+    const token = await otplib.authenticator.generate(secret);
+    await strapi.plugins.email.services.email.accountRequest(user.email, user.username, token, params.type);
+
+    return { error: false, status: 200, msg: 'Mail sent' };
+  },
+
+  /**
+  * Promise to generate OTP
+  * @return {Promise}
+  */
+
+  processAccountRequest: async (user, body) => {
+   // Note: To get the full response of Mongo, use the `remove()` method
+   // or add spent the parameter `{ passRawResult: true }` as second argument.
+    const isValid = otplib.authenticator.check(body.otpCode, secret);
+
+    if(isValid && (body.type == 'pause' || body.type == 'running')) {
+      const userParams = {
+        id: user._id
+      };
+      if(body.type == "pause")
+        await Campaign.update({profile: user.profile}, {$set: { isActive: false }}, { multi: true });
+      const userValues = {
+        status: body.type == "pause"?"paused":body.type=="running"?"running":"deleted"
+      };
+      await strapi.plugins['users-permissions'].services.user.edit(userParams, userValues);
+    } else if(isValid && body.type == 'delete') {
+
+      const userParams = {
+        id: user._id
+      };
+
+      await strapi.plugins['users-permissions'].services.user.remove(userParams, user);
+    }
+
+    return { code: isValid, error: false, status: 200 } ;
   }
 };

@@ -9,7 +9,7 @@
 // Public dependencies.
 const _ = require('lodash');
 const domainPing = require("domain-ping");
-
+	
 let ruleDefault = {
 	"hideNotification" : true,
 	"loopNotification" : true,
@@ -20,7 +20,8 @@ let ruleDefault = {
 	"delayBetween" : 3,
 	"displayPosition" : "Bottom Left",
 	"popupAnimationIn" : "fadeInUp",
-	"popupAnimationOut" : "fadeOutDown"
+	"popupAnimationOut" : "fadeOutDown",
+	"displayOnAllPages" : true
 };
 
 let configurationDefault = {
@@ -70,17 +71,19 @@ let configurationDefault = {
 	  "recentConv" : 5,
 	  "hideAnonymousConversion" : true,
 	  "onlyDisplayNotification" : false,
-		liveVisitorCount: 0
+		"liveVisitorCount": 0
   },
   "contentText" : "Company Name",
 	"visitorText" : "people",
 	"notificationUrl" : "",
-	"toggleMap" : true
+	"toggleMap" : true,
+	"liveVisitorCount": 0,
+	"otherText": "signed up for"
 };
 
 let getUniqueUsers = async function(index, trackingId, callback) {
   try {
-    await strapi.services.elasticsearch.uniqueUsersWeekly(index, trackingId).then(res=>{
+    await strapi.services.elasticsearch.getAllUniqueUsers(index, trackingId).then(res=>{
       callback(null, res);
     });
   } catch(err) {
@@ -88,9 +91,9 @@ let getUniqueUsers = async function(index, trackingId, callback) {
   }
 }
 
-let getSignUps = async function(index, trackingId, type, callback) {
+let getSignUps = async function(index, trackingId, type, host, callback) {
   try {
-    await strapi.services.elasticsearch.notification(index, trackingId, type, true).then(res=>{
+    await strapi.services.elasticsearch.notification(index, trackingId, type, true, host).then(res=>{
       callback(null, res);
     });
   } catch(err) {
@@ -181,15 +184,19 @@ module.exports = {
 		},
 
   /**
-   * Promise to add a/an campaign.
+   * Promise to add a/an new campaign with default configuration and rules.
    *
    * @return {Promise}
    */
   add: async (values) => {
-		values.websiteUrl = values.websiteUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
-		values.isActive = true;
+		let campaignValue = values.campaign;
+		let pagesValues = values.pages;
+		campaignValue.websiteUrl = campaignValue.websiteUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
+		campaignValue.isActive = true;
+		campaignValue.health = 'bad';
+
     var checkDomain = new Promise((resolve, reject) => {
-      domainPing(values.websiteUrl)
+      domainPing(campaignValue.websiteUrl)
        .then((res) => {
            resolve(res);
        })
@@ -198,6 +205,11 @@ module.exports = {
        });
     });
 
+		/**
+		*	Calls checkDomain function
+		*
+		*@return {Promise}
+		*/
     var dom = await checkDomain
     .then((result) => {
       return result;
@@ -209,8 +221,13 @@ module.exports = {
     if(dom.error) {
       return dom;
     } else {
-			const data = await Campaign.create(values);
+			const data = await Campaign.create(campaignValue);
 
+			/**
+			* Find Notificationtypes and create new configuration for campaign related to notificationType
+			*
+			*@return {Null}
+			*/
 			await Notificationtypes.find()
       .exec()
       .then(async notifications => {
@@ -252,16 +269,17 @@ module.exports = {
 					    "fontWeight" : "normal",
 							"linkFontFamily": "inherit",
 						  "linkFontWeight": "normal",
-							"selectDurationData": "hours",
-						  "selectLastDisplayConversation": "hours",
+							"selectDurationData": "days",
+						  "selectLastDisplayConversation": "days",
 							"bulkData" : 5,
 						  "recentNumber" : 5,
 						  "recentConv" : 5,
 						  "hideAnonymousConversion" : true,
 						  "onlyDisplayNotification" : false,
-							liveVisitorCount: 0
+							"liveVisitorCount": 0,
+							"otherText": "signed up for"
 					  };
-						// newConfiguration['panelStyle'].color = { "r" : 0, "g" : 149, "b" : 247, "a" : 1 },
+						newConfiguration['otherText'] = 'signed up for',
 						newConfiguration['contentText'] = 'Company';
 					}
 					if(notification.notificationName == 'Recent Activity') {
@@ -303,16 +321,17 @@ module.exports = {
 					    "fontWeight" : "normal",
 							"linkFontFamily": "inherit",
 						  "linkFontWeight": "normal",
-							"selectDurationData": "hours",
-						  "selectLastDisplayConversation": "hours",
+							"selectDurationData": "days",
+						  "selectLastDisplayConversation": "days",
 							"bulkData" : 5,
 						  "recentNumber" : 5,
 						  "recentConv" : 5,
 						  "hideAnonymousConversion" : true,
 						  "onlyDisplayNotification" : false,
-							liveVisitorCount: 0
+							"liveVisitorCount": 0,
+							"otherText": "signed up for"
 					  };
-						// newConfiguration['panelStyle'].color = { "r" : 0, "g" : 0, "b" : 0, "a" : 0 },
+						newConfiguration['otherText'] = 'Recently signed up for',
 						newConfiguration['contentText'] = 'Company Name';
 					}
 					if(notification.notificationName == 'Live Visitor Count') {
@@ -349,16 +368,18 @@ module.exports = {
 					    "fontWeight" : "normal",
 							"linkFontFamily": "inherit",
 						  "linkFontWeight": "normal",
-							"selectDurationData": "hours",
-						  "selectLastDisplayConversation": "hours",
+							"selectDurationData": "days",
+						  "selectLastDisplayConversation": "days",
 							"bulkData" : 5,
 						  "recentNumber" : 5,
 						  "recentConv" : 5,
 						  "hideAnonymousConversion" : true,
 						  "onlyDisplayNotification" : false,
-							liveVisitorCount: 0
+							"liveVisitorCount": 0,
+							"liveVisitorText":'are viewing this site'
 					  };
-						// newConfiguration['panelStyle'].color = { "r" : 0, "g" : 149, "b" : 247, "a" : 1 },
+
+						newConfiguration['liveVisitorText'] = 'are viewing this site';
 						newConfiguration['contentText'] = 'Influence';
 					}
 					// if(notification.notificationName == 'Review Notification') {
@@ -410,7 +431,6 @@ module.exports = {
 					// }
 
           Configuration.create(newConfiguration, (err, result) => {
-						console.log(result);
             if(err)
               return err;
           });
@@ -418,11 +438,27 @@ module.exports = {
       });
       let newRules = ruleDefault;
 			newRules['campaign'] = data._id;
-			await Rules.create(newRules, (err, result) => {
+			await Rules.create(newRules, async (err, result) => {
 				if(err)
           return err;
+				else {
+					await pagesValues.map(async page => {
+						const pages = {
+				      name: page.productName,
+				      productName: page.productName,
+				      productUrl: page.productUrl,
+				      captureUrl: page.captureUrl,
+				      campaign: data._id,
+				      domain: data.websiteUrl,
+				      rule: result._id,
+				      isActive: true
+				    };
+						const savedPage = await strapi.services.subcampaign.add(pages);
+					});
+				}
       });
-      return data;
+
+			return data; // return new campaign
     }
   },
 
@@ -436,7 +472,11 @@ module.exports = {
     // Note: The current method will return the full response of Mongo.
     // To get the updated object, you have to execute the `findOne()` method
     // or use the `findOneOrUpdate()` method with `{ new:true }` option.
-    return Campaign.findOneAndUpdate(params, values, { upsert: false, multi: true, new: true }).populate('webhooks').populate('profile');
+	  try {
+			return Campaign.findOneAndUpdate(params, values, { upsert: false, multi: true, new: true }).populate('webhooks').populate('profile');
+		} catch(err) {
+			console.log(err);
+		}
   },
 
   /**
@@ -448,18 +488,21 @@ module.exports = {
   remove: async params => {
     // Note: To get the full response of Mongo, use the `remove()` method
     // or add spent the parameter `{ passRawResult: true }` as second argument.
-    const data = await Campaign.findOneAndRemove(params, {})
+    try {
+			const data = await Campaign.findOneAndRemove(params, {})
       .populate(_.keys(_.groupBy(_.reject(strapi.models.campaign.associations, {autoPopulate: false}), 'alias')).join(' '));
 
-    _.forEach(Campaign.associations, async association => {
-      const search = (_.endsWith(association.nature, 'One')) ? { [association.via]: data._id } : { [association.via]: { $in: [data._id] } };
-      const update = (_.endsWith(association.nature, 'One')) ? { [association.via]: null } : { $pull: { [association.via]: data._id } };
+	    _.forEach(Campaign.associations, async association => {
+	      const search = (_.endsWith(association.nature, 'One')) ? { [association.via]: data._id } : { [association.via]: { $in: [data._id] } };
+	      const update = (_.endsWith(association.nature, 'One')) ? { [association.via]: null } : { $pull: { [association.via]: data._id } };
 
-      await strapi.models[association.model || association.collection].remove(
-        search
-     	);
-    });
-
+	      await strapi.models[association.model || association.collection].remove(
+	        search
+	     	);
+    	});
+		} catch(err) {
+			console.log(err);
+		}
     return data;
   },
 
@@ -469,7 +512,7 @@ module.exports = {
    * @return {Promise}
    */
 
-  fetchUserCampaignsInfo: async (params) => {
+  fetchUserCampaignsInfo: async (params, host) => {
     let countConfig = 0;
 
     const profile = await Profile.findOne({user: params?params:null})
@@ -516,7 +559,7 @@ module.exports = {
 
 		// let userSignUps = [];
 		let signedUpUsers = campaignWebsites.map(async camp => {
-			await getSignUps('filebeat-*', camp.trackingId, 'journey', (err, response) => {
+			await getSignUps('filebeat-*', camp.trackingId, 'journey', host, (err, response) => {
 				if(!err) {
 					camp['signups'] = response;
 				}

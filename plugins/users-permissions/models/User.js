@@ -7,7 +7,14 @@
  const request = require('request');
  const uuidv4 = require('uuid/v4');
  const bcrypt = require('bcryptjs');
-
+ const schedule = require('node-schedule');
+ const moment = require('moment');
+ /**
+ * Function for http requests
+ *
+ *@param{{method, url, headers, form}}
+ *@return {Promise}
+ */
 function doRequest(options) {
   return new Promise(function (resolve, reject) {
     request(options , function (error, res, body) {
@@ -18,7 +25,7 @@ function doRequest(options) {
       if (!error && res.statusCode == 200 || (response && !response.error)) {
         resolve(body);
       } else {
-        reject(response.error);
+        reject(error || (response && response.error?response.error:''));
       }
     });
   });
@@ -53,29 +60,36 @@ module.exports = {
   // Before creating a value.
   // Fired before `insert` query.
   beforeCreate: async (model) => {
+    //create verification token for new customer
     const verificationToken = crypto.randomBytes(64).toString('hex');
     model.verificationToken = verificationToken
     model.verified = false;
-    model.path = '/checkout';
+    model.path = '/getting-started';
+    model.status = 'running';
     let password = await bcrypt.hash(uuidv4(), 10);
 
     model.password = model.password?model.password:'mySecretPasswordInPlace';
 
     const user = {
       id: model._id,
-      name: model.username,
+      name: model.username || 'test',
       email: model.email,
       password: model.password,
       provider: 'local',
       customer_id: model._id,
     };
     try {
+      //create new user in servicebot
       var data = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/users/register', form: user});
+      //retrieve auth token for new user
       var token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: model.email, password: user.password }});
+      //retrieve new user's details from servicebot
       var userDetails = await doRequest({method: 'GET', url:'https://servicebot.useinfluence.co/api/v1/users/own', headers: {
         Authorization: 'JWT ' + JSON.parse(token).token,
         'Content-Type': 'application/json'
       }});
+
+      //parse and save servicebot's new user's details to db
       userDetails = userDetails?JSON.parse(userDetails):[];
       if(userDetails.length)
         model.servicebot = {
@@ -93,10 +107,47 @@ module.exports = {
   // After creating a value.
   // Fired after `insert` query.
   afterCreate: async (model, result) => {
+    /**
+    * send email verification mail to new user
+    *
+    *@param{{email, subject, name, verificationToken}}
+    *@return {Promise}
+    */
     const email = result.email;
     const name = result.username.charAt(0).toUpperCase() + result.username.substr(1);
     const verificationToken = result.verificationToken;
     strapi.plugins.email.services.email.accountCreated(email, name, verificationToken);
+
+    var date = moment().add(5, 'hours');
+    schedule.scheduleJob(date.format(), async function(user){
+      // strapi.plugins.email.services.email.account(email, name, verificationToken);
+      const findUser = await strapi.query('user', 'users-permissions').findOne({
+        _id: user._id || user.id
+      });
+      if(findUser && (!findUser.payment || (findUser.payment && !findUser.payment.length)))
+        console.log('User has not completed payment yet!');
+    }.bind(null,result));
+
+    const state = {
+      past_state: {
+        state: null,
+        created_at: null,
+        updated_at: null
+      },
+      present_state: {
+        state: "User Created",
+        created_at: new Date(),
+        updated_at: new Date()
+      },
+      future_state: {
+        state: "Create Profile",
+        created_at: new Date(),
+        updated_at: new Date()
+      },
+      user: result._id
+    };
+    //Create new state for new user
+    strapi.api.state.services.state.add(state);
   },
 
   // Before updating a value.

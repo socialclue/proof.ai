@@ -13,6 +13,10 @@
       "type": "string",
       "multiple": false
     },
+    "campaignType": {
+      "type": "string",
+      "multiple": false
+    },
     "logTime": {
       "type": "date",
       "multiple": false
@@ -61,6 +65,14 @@
     },
     "webhooks": {
       "model": "webhooks"
+    },
+    "health": {
+      "type": "string",
+      "multiple": false
+    },
+    "shopify": {
+      "type": "json",
+      "multiple": false
     }
   }
 }

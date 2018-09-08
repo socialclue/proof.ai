@@ -45,10 +45,10 @@ module.exports = {
    */
 
   create: async (ctx) => {
-    const data = await strapi.services.client.add(ctx.request.body);
-
+    const data = await strapi.services.client.add(ctx.request.body, ctx.state.user._id);
     // Send 201 `created`
     ctx.created(data);
+
   },
 
   /**

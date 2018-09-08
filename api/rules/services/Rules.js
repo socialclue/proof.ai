@@ -163,7 +163,8 @@ module.exports = {
         displayTime: 1,
         delayBetween: 1,
         displayPosition: 1,
-        campaign: 1
+        campaign: 1,
+        displayOnAllPages : 1
       }
     })
     .lean()
@@ -212,7 +213,7 @@ module.exports = {
 
   add: async (values) => {
     const data = await Rules.create(_.omit(values, _.keys(_.groupBy(strapi.models.rules.associations, 'alias'))));
-    await strapi.hook.mongoose.manageRelations('rules', _.merge(_.clone(data), { values }));
+    //await strapi.hook.mongoose.manageRelations('rules', _.merge(_.clone(data), { values }));
     return data;
   },
 

@@ -19,6 +19,12 @@ var options = {
 };
 var invoiceTemplate = require('../config/invoiceTemplate');
 
+/**
+* Function for http requests
+*
+*@param{{method, url, headers, form}}
+*@return {Promise}
+*/
 function doRequest(options) {
   return new Promise(function (resolve, reject) {
     request(options , function (error, res, body) {
@@ -103,7 +109,14 @@ module.exports = {
    */
 
   userInvoices: async (user) => {
-    var auth_token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: user.email, password: user.password }});
+    var auth_token = await doRequest({
+      method: 'POST',
+      url:'https://servicebot.useinfluence.co/api/v1/auth/token',
+      form: {
+        email: user.email,
+        password: user.password
+      }
+    }); //retrieve auth token for logged in user from service bot
 
     var invoices = await doRequest({
       method: 'GET',
@@ -112,8 +125,9 @@ module.exports = {
         Authorization: 'JWT ' + JSON.parse(auth_token).token,
         'Content-Type': 'application/json'
       }
-    });
-    return JSON.parse(invoices);
+    }); //retrieve user invoices from service bot
+
+    return JSON.parse(invoices); //returns parsed user's invoices
   },
 
   /**
@@ -189,6 +203,7 @@ module.exports = {
     let plan = values.plan;
     let coupon = values.coupon;
     let payment_subscription;
+    // retrieve logged in user's auth token from servicebot
     let auth_token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: user.email, password: user.password }});
     plan["client_id"] = user.servicebot.client_id;
 
@@ -197,6 +212,11 @@ module.exports = {
       plan["token_id"] = token;
     }
 
+    /**
+		*	subscribe to subscription plan and make payment
+		*
+		*@return {Promise}
+		*/
     if(auth_token) {
       payment_subscription = await doRequest({
         method: 'POST',
@@ -215,6 +235,7 @@ module.exports = {
       return { err: true, message: payment_subscription.error };
     }
 
+    //created payments object for storing
     const payment_values = {
       user: user._id,
       service_id: payment_subscription.service_id,
@@ -242,6 +263,8 @@ module.exports = {
     };
 
     await Plan.create(plan_value);
+
+    //Create new payment document
     const data = await Payment.create(payment_values);
     const userParams = {
       id: user._id
@@ -264,6 +287,7 @@ module.exports = {
   upgradeCard: async (user, values) => {
     var add_funds;
     let token = values.id;
+    // retrieve auth token for logged in user from service bot
     var auth_token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: user.email, password: user.password }});
 
     const funds_details = {
@@ -271,6 +295,11 @@ module.exports = {
       "token_id": token
     };
 
+    /**
+		*	Add new card to the servicebot
+		*
+		*@return {Promise}
+		*/
     if(auth_token) {
       add_funds = await doRequest({
         method: 'POST',
@@ -286,9 +315,42 @@ module.exports = {
     } else {
       return { message: "user not found", err: true };
     }
-    return JSON.parse(add_funds);
+    return JSON.parse(add_funds); //return updated card details
   },
 
+
+  /**
+   * Promise to fetch servicebot payment cards.
+   *
+   * @return {Promise}
+   */
+
+  fetchCards: async (user) => {
+    var card_details;
+    // retrieve auth token for logged in user from service bot
+    var auth_token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: user.email, password: user.password }});
+
+    /**
+    *	Add new card to the servicebot
+    *
+    *@return {Promise}
+    */
+    if(auth_token) {
+      card_details = await doRequest({
+        method: 'GET',
+        url:'https://servicebot.useinfluence.co/api/v1/funds/own',
+        headers: {
+          Authorization: 'JWT ' + JSON.parse(auth_token).token,
+          'Content-Type': 'application/json'
+        }
+      });
+      if(card_details.error)
+        return { err: true, message: add_funds.message };
+    } else {
+      return { message: "user not found", err: true };
+    }
+    return JSON.parse(card_details); //return updated card details
+  },
 
   /**
    * Promise to cancel a/an servicebot payment subscription.
@@ -397,7 +459,7 @@ module.exports = {
     // Note: The current method will return the full response of Mongo.
     // To get the updated object, you have to execute the `findOne()` method
     // or use the `findOneOrUpdate()` method with `{ new:true }` option.
-    await strapi.hook.mongoose.manageRelations('payment', _.merge(_.clone(params), { values }));
+    //await strapi.hook.mongoose.manageRelations('payment', _.merge(_.clone(params), { values }));
     return Payment.update(params, values, { multi: true });
   },
 

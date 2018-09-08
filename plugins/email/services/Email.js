@@ -423,38 +423,119 @@ module.exports = {
   },
 
 
-    /**
-     * gdprform Page Template.
-     * @param query
-     * @returns {Promise<*>}
-     */
-    gdprForm: async (query) =>  {
-      const email = query.email;
-      const code = query.code;
-      const mailSub = "GDPR Form sunbmition";
-      const content =`
-        <br/>
-        <span>This is a confirmation email to let you know that you have been successfully GRPR Compliance.</span>
-        <br/>
-        <span>Please Enter the code in GDPR Form : {code}</span>
-        <br/>
-        {code}
-        <br/>
-        <span>Thanks for investing your faith in us.</span>
-        <br/>
-        <span>See you soon.</span>
-        <br/>
-        <span>Thanks!</span>
-      `;
+  /**
+   * gdprform Page Template.
+   * @param query
+   * @returns {Promise<*>}
+   */
+  gdprForm: async (query) =>  {
+    const email = query.email;
+    const code = query.code;
+    const mailSub = "GDPR Form sunbmition";
+    const content =`
+      <br/>
+      <span>This is a confirmation email to let you know that you have been successfully GRPR Compliance.</span>
+      <br/>
+      <span>Please Enter the code in GDPR Form : {code}</span>
+      <br/>
+      {code}
+      <br/>
+      <span>Thanks for investing your faith in us.</span>
+      <br/>
+      <span>See you soon.</span>
+      <br/>
+      <span>Thanks!</span>
+    `;
 
-      var mytemp = template.commontemp(mailSub, code, content);
+    var mytemp = template.commontemp(mailSub, code, content);
 
-      let mailOptions = {
-        from: 'support@useinfluence.co',
-        to: email,
-        subject: mailSub,
-        html: mytemp
-      };
-      return send(mailOptions);
-    }
+    let mailOptions = {
+      from: 'support@useinfluence.co',
+      to: email,
+      subject: mailSub,
+      html: mytemp
+    };
+    return send(mailOptions);
+  },
+
+  campaignIssue: async(email, name, campaign) => {
+    const mailSub = "Issue with user campaign.";
+    const content =`
+      <br/>
+      <span>This is to let you know about the urgent issue regarding User's campaign.</span>
+      <br/>
+      <span>User : {name}</span>
+      <br/>
+      <span>Email : {email}</span>
+      <br/>
+      <span>Campaign Name : {campaign.campaignName}</span>
+      <br/>
+      <span>Campaign URL : {campaign.websiteUrl}</span>
+      <br/>
+      <span>Thanks for investing your faith in us.</span>
+      <br/>
+      <span>See you soon.</span>
+      <br/>
+      <span>Thanks!</span>
+    `;
+
+    var mytemp = template.commontemp(mailSub, name, content);
+
+    let mailOptions = {
+      from: 'info@useinfluence.co',
+      to: 'support@useinfluence.co',
+      subject: mailSub,
+      html: mytemp
+    };
+    return send(mailOptions);
+  },
+
+
+  /**
+   * Account Pause and delete mail.
+   * @param email
+   * @param name
+   * @param limit
+   * @returns {Promise<*>}
+   */
+  accountRequest: async (email, name, code, requestType) =>  {
+      const type = requestType.charAt(0).toUpperCase() + requestType.slice(1)
+        const mailSub = `Account ${type} Request`;
+        const content =`
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                  <div>Hey ${name},</div>
+                  <div>&nbsp;</div>
+                  <div>This is a confirmation email to let you know that you have requested to ${type} your account.</div>
+                  <div>Your one time password is ${code}.</div>
+              </td>
+            </tr>
+          </table>
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                <div>Thanks for investing your faith in us.</div>
+                <div>See you soon.</div>
+              </td>
+            </tr>
+          </table>
+        `;
+
+        var mytemp = template.commontemp(mailSub, name, content);
+
+        let mailOptions = {
+          from: 'noreply@useinfluence.co',
+          to: email,
+          subject: mailSub,
+          html: mytemp
+        };
+        return send(mailOptions);
+    },
 };

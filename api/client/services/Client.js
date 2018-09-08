@@ -8,6 +8,7 @@
 
 // Public dependencies.
 const _ = require('lodash');
+const mongoose = require('mongoose');
 
 module.exports = {
 
@@ -19,14 +20,17 @@ module.exports = {
 
   fetchAll: (params) => {
     const convertedParams = strapi.utils.models.convertParams('client', params);
-
-    return Client
-      .find()
-      .where(convertedParams.where)
-      .sort(convertedParams.sort)
-      .skip(convertedParams.start)
-      .limit(convertedParams.limit)
-      .populate(_.keys(_.groupBy(_.reject(strapi.models.client.associations, {autoPopulate: false}), 'alias')).join(' '));
+    try {
+      return Client
+        .find()
+        .where(convertedParams.where)
+        .sort(convertedParams.sort)
+        .skip(convertedParams.start)
+        .limit(convertedParams.limit)
+        .populate(_.keys(_.groupBy(_.reject(strapi.models.client.associations, {autoPopulate: false}), 'alias')).join(' '));
+    } catch(err) {
+      console.log(err);
+    }
   },
 
   /**
@@ -47,9 +51,9 @@ module.exports = {
    * @return {Promise}
    */
 
-  add: async (values) => {
-    const data = await Client.create(_.omit(values, _.keys(_.groupBy(strapi.models.client.associations, 'alias'))));
-    await strapi.hook.mongoose.manageRelations('client', _.merge(_.clone(data), { values }));
+  add: async (values, user) => {
+    values['user'] = user;
+    var data = await Client.create(values);
     return data;
   },
 
@@ -63,7 +67,7 @@ module.exports = {
     // Note: The current method will return the full response of Mongo.
     // To get the updated object, you have to execute the `findOne()` method
     // or use the `findOneOrUpdate()` method with `{ new:true }` option.
-    await strapi.hook.mongoose.manageRelations('client', _.merge(_.clone(params), { values }));
+    //await mongoose.manageRelations('client', _.merge(_.clone(params), { values }));
     return Client.update(params, values, { multi: true });
   },
 

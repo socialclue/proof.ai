@@ -92,6 +92,7 @@ module.exports = {
    */
 
   fetchAll: (params) => {
+    console.log('--------------', params);
     return strapi.query('user', 'users-permissions').find(strapi.utils.models.convertParams('user', params));
   },
 
@@ -155,10 +156,14 @@ module.exports = {
         });
       if(response && response.error)
         return { err: true, message: response.message };
-      await doRequest({method: 'DELETE', url:`https://servicebot.useinfluence.co/api/v1/users/${user.servicebot.client_id}`, headers: {
-      Authorization: 'JWT ' + JSON.parse(token).token,
-      'Content-Type': 'application/json'
-    }});
+      await doRequest({
+        method: 'DELETE',
+        url:`https://servicebot.useinfluence.co/api/v1/users/${user.servicebot.client_id}`,
+        headers: {
+          Authorization: 'JWT ' + JSON.parse(token).token,
+          'Content-Type': 'application/json'
+        }
+      });
     }
 
     return strapi.query('user', 'users-permissions').delete(params);

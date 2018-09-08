@@ -48,6 +48,10 @@
       "plugin": "users-permissions",
       "configurable": false
     },
+    "status": {
+      "type": "string",
+      "configurable": false
+    },
     "profile": {
       "model": "profile",
       "via": "user"
@@ -65,12 +69,7 @@
       "multiple": false
     },
     "coupon": {
-      "model": "coupon",
-      "via": "user"
-    },
-    "clients": {
-      "collection": "client",
-      "via": "userId"
+      "model": "coupon"
     },
     "code": {
       "model": "code",
