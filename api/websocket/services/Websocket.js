@@ -9,7 +9,7 @@ const moment = require('moment');
 const uuidv1 = require('uuid/v1');
 
 const client = elasticsearch.Client({
-  host: 'elasticsearch:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
+  host: '10.15.254.94:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
   requestTimeout: Infinity, // Tested
   keepAlive: true, // Tested
   log: 'trace'
