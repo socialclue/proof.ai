@@ -36,7 +36,7 @@
 let healthTest = async function(campaign, displayLeads, captureLeads) {
   let health;
   let query = {
-    index: index,
+    index: 'filebeat-*',
     body: {
       query: {
         "bool": {
