@@ -24,6 +24,8 @@ spec:
         env:
         - name: DATABASE_HOST
           value: db-service
+        - name: REDIS_HOST
+          value: redis-9w6tb
         - name: SENDGRID_API_KEY
           valueFrom:
             secretKeyRef:
