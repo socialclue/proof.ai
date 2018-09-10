@@ -41,7 +41,7 @@ let healthTest = async function(campaign, displayLeads, captureLeads) {
       query: {
         "bool": {
           "must": [
-            { "match": { "json.value.trackingId":  trackingId }}
+            { "match": { "json.value.trackingId":  campaign.trackingId }}
           ]
         }
       },
