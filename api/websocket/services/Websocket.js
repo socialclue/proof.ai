@@ -99,6 +99,7 @@ const campaignLogger = function(value, done) {
           userDetail['username'] = userDetail.username ? userDetail.username : userInfo.username;
           userDetail['profile_pic'] = userInfo.profile_pic;
 
+          console.log(userDetail, '============>userDetail');
           /**
           *log data to elasticsearch
           **/
@@ -132,14 +133,15 @@ module.exports =  {
     const formatter = msg;
     let message =  formatter + '\n';
 
-    // if(msg.value && msg.value.event == 'formsubmit') {
-    //   await strapi.config.functions.kue.createJob(msg.value.fingerprint, 'Campaign Logger', 'Logs new form data into Signups index', msg.value, 'high', 3, function(err) {
-    //     if(err)
-    //       console.log(err);
-    //     else
-    //       strapi.config.functions.kue.processJobs(msg.value.fingerprint, 1, campaignLogger);
-    //   });
-    // }
+    if(msg.value && msg.value.event == 'formsubmit') {
+      console.log(msg.value.fingerprint, '==============fingerprint');
+      await strapi.config.functions.kue.createJob(msg.value.fingerprint, 'Campaign Logger', 'Logs new form data into Signups index', msg.value, 'high', 3, function(err) {
+        if(err)
+          console.log(err);
+        else
+          strapi.config.functions.kue.processJobs(msg.value.fingerprint, 1, campaignLogger);
+      });
+    }
 
     webSocketStream.write(message);
   },
