@@ -14,7 +14,7 @@ const q = kue.createQueue({
   prefix: 'q',
   redis: {
     port: strapi.config.redisPort,
-    host: "35.237.48.110",
+    host: "35.237.30.58",
     auth: strapi.config.redisPassword,
     db: strapi.config.redisDb, // if provided select a non-default redis db
     options: {
@@ -53,7 +53,7 @@ module.exports = {
 
   processJobs: async (jobName, number, fn) => {
     q.process(jobName, number, function(values, done ) {
-      console.log('------------->logging data');
+      console.log('=================process job');
       fn(values.data.value, done);
     });
   }
