@@ -55,19 +55,24 @@ module.exports = {
     });
     auth_response = JSON.parse(auth_response);
 
-    const access_token = auth_response.access_token;
+    if(auth_response.access_token) {
+      const access_token = auth_response.access_token;
 
-    var aggrement_create = await doRequest({
-      method: 'POST',
-      url:'https://api.sandbox.paypal.com/v1/payments/billing-agreements',
-      headers: {
-        Authorization: 'Bearer ' + access_token,
-        'Content-Type': 'application/json'
-      },
-      json: body
-    });
+      var aggrement_create = await doRequest({
+        method: 'POST',
+        url:'https://api.sandbox.paypal.com/v1/payments/billing-agreements',
+        headers: {
+          Authorization: 'Bearer ' + access_token,
+          'Content-Type': 'application/json'
+        },
+        json: body
+      });
 
-    return aggrement_create;
+      return aggrement_create;
+    } else {
+      return { error: true, msg: auth_response.error };
+    }
+
   },
 
   /**
