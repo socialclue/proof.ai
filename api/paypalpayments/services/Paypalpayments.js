@@ -35,7 +35,7 @@ function doRequest(options) {
 module.exports = {
 
   /**
-   * Promise to fetch all paypalpayments.
+   * Create Agreement for customers approval.
    *
    * @return {Promise}
    */
@@ -76,15 +76,40 @@ module.exports = {
   },
 
   /**
-   * Promise to fetch a/an paypalpayments.
+   * Make payment after agreement is approved by customer.
    *
    * @return {Promise}
    */
 
-  fetch: (params) => {
-    return Paypalpayments
-      .findOne(_.pick(params, _.keys(Paypalpayments.schema.paths)))
-      .populate(_.keys(_.groupBy(_.reject(strapi.models.paypalpayments.associations, {autoPopulate: false}), 'alias')).join(' '));
+  payment: async (body) => {
+    var auth = new Buffer(strapi.config.PAYPAL_CLIENT_ID + ':' + strapi.config.PAYPAL_SECRET).toString('base64');
+    var auth_response = await doRequest({
+      method: 'POST',
+      url:'https://api.sandbox.paypal.com/v1/oauth2/token',
+      headers: {
+        Authorization: 'Basic ' + auth
+      },
+      form: {
+        grant_type: 'client_credentials'
+      }
+    });
+    auth_response = JSON.parse(auth_response);
+
+    if(auth_response.access_token) {
+      const access_token = auth_response.access_token;
+      var payment_create = await doRequest({
+        method: 'POST',
+        url:`https://api.sandbox.paypal.com/v1/payments/billing-agreements/${body.token}/agreement-execute`,
+        headers: {
+          Authorization: 'Bearer ' + access_token,
+          'Content-Type': 'application/json'
+        },
+        json: body
+      });
+      return payment_create;
+    } else {
+      return { error: true, msg: auth_response.error };
+    }
   },
 
   /**

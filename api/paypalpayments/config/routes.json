@@ -9,9 +9,9 @@
       }
     },
     {
-      "method": "GET",
-      "path": "/paypalpayments/:_id",
-      "handler": "Paypalpayments.findOne",
+      "method": "POST",
+      "path": "/paypalpayments/payment",
+      "handler": "Paypalpayments.payment",
       "config": {
         "policies": []
       }

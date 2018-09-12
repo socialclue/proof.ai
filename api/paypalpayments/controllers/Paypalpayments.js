@@ -27,12 +27,8 @@ module.exports = {
    * @return {Object}
    */
 
-  findOne: async (ctx) => {
-    if (!ctx.params._id.match(/^[0-9a-fA-F]{24}$/)) {
-      return ctx.notFound();
-    }
-
-    const data = await strapi.services.paypalpayments.fetch(ctx.params);
+  payment: async (ctx) => {
+    const data = await strapi.services.paypalpayments.payment(ctx.request.body);
 
     // Send 200 `ok`
     ctx.send(data);
