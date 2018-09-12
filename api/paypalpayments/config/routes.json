@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/paypalpayments/aggrement",
+      "handler": "Paypalpayments.aggrement",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/paypalpayments/:_id",
+      "handler": "Paypalpayments.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/paypalpayments",
+      "handler": "Paypalpayments.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/paypalpayments/:_id",
+      "handler": "Paypalpayments.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/paypalpayments/:_id",
+      "handler": "Paypalpayments.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

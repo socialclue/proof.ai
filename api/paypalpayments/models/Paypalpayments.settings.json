@@ -1,0 +1,21 @@
+{
+  "connection": "default",
+  "collectionName": "",
+  "info": {
+    "name": "paypalpayments",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "plan": {
+      "type": "json",
+      "multiple": false
+    },
+    "user": {
+      "type": "string",
+      "multiple": false
+    }
+  }
+}
