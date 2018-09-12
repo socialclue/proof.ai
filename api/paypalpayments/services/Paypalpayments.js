@@ -40,7 +40,7 @@ module.exports = {
    * @return {Promise}
    */
 
-  createAggrement: async (user, body) => {
+  createAgreement: async (user, body) => {
     var auth = new Buffer(strapi.config.PAYPAL_CLIENT_ID + ':' + strapi.config.PAYPAL_SECRET).toString('base64');
 
     var auth_response = await doRequest({
@@ -58,7 +58,7 @@ module.exports = {
     if(auth_response.access_token) {
       const access_token = auth_response.access_token;
 
-      var aggrement_create = await doRequest({
+      var agreement_create = await doRequest({
         method: 'POST',
         url:'https://api.sandbox.paypal.com/v1/payments/billing-agreements',
         headers: {
@@ -68,7 +68,7 @@ module.exports = {
         json: body
       });
 
-      return aggrement_create;
+      return agreement_create;
     } else {
       return { error: true, msg: auth_response.error };
     }

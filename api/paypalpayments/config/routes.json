@@ -2,8 +2,8 @@
   "routes": [
     {
       "method": "POST",
-      "path": "/paypalpayments/aggrement",
-      "handler": "Paypalpayments.aggrement",
+      "path": "/paypalpayments/agreement",
+      "handler": "Paypalpayments.agreement",
       "config": {
         "policies": []
       }

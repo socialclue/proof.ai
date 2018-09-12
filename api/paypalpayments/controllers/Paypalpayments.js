@@ -14,8 +14,8 @@ module.exports = {
    * @return {Object|Array}
    */
 
-  aggrement: async (ctx) => {
-    const data = await strapi.services.paypalpayments.createAggrement(ctx.state.user, ctx.request.body);
+  agreement: async (ctx) => {
+    const data = await strapi.services.paypalpayments.createAgreement(ctx.state.user, ctx.request.body);
 
     // Send 200 `ok`
     ctx.send(data);
