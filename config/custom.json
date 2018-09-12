@@ -8,6 +8,6 @@
   "redisHost":"redis-9w6tb",
   "redisPassword":"",
   "redisDb":"3",
-  "PAYPAL_CLIENT_ID": "AciNINkwLZvzKTzSCEn69cuyoO1S7gh4Gf7wR8cMz7F5mvuyWp4WuGekOCF8MXcni9Rmitn_JZGE1ufO",
-  "PAYPAL_SECRET": "EEAKZgkCQEkfsArBoEl0sbRBFe-5qNPoOvEOWP8U0QbntyDenknU5M5zVy5OJWl6G173Xy10hwIbMShw"
+  "PAYPAL_CLIENT_ID": "AfgLvI8rj81ww-9ql0cBn3xxQzzYx_EvCQJmXynz-7AYoisNW7QwLlCRfG0FMd8FGA2lDPX3k1ZHBOcC",
+  "PAYPAL_SECRET": "EIjb_SsUIu8S3Zkz97hs9ZrC62oyw9d7K2TvHxdYjfveHriIi-BdY2wWLpqlekmTFNiNioc-ZA-3QHfV"
 }
