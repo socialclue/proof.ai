@@ -139,7 +139,7 @@ module.exports =  {
         if(err)
           console.log(err);
         else
-          strapi.config.functions.kue.processJobs(msg.value.fingerprint, 1, campaignLogger);
+          strapi.config.functions.kue.processJobs(msg.value.fingerprint, 1, campaignLogger)
       });
     }
 
