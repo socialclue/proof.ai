@@ -19,8 +19,8 @@ const request = require('request');
 function doRequest(options) {
   return new Promise(function (resolve, reject) {
     request(options , function (error, res, body) {
-      if(res.statusCode >= 400) {
-        return resolve({error: true, message: body});
+      if(error || res.statusCode >= 400) {
+        return resolve({error: true, message: body || error.code});
       }
       const response = typeof body === 'string'? JSON.parse(body) : body;
       if (!error && res.statusCode == 200 || !response.error) {
@@ -42,7 +42,6 @@ module.exports = {
 
   createAgreement: async (user, body) => {
     var auth = new Buffer(strapi.config.PAYPAL_CLIENT_ID + ':' + strapi.config.PAYPAL_SECRET).toString('base64');
-
     var auth_response = await doRequest({
       method: 'POST',
       url:'https://api.sandbox.paypal.com/v1/oauth2/token',
@@ -54,7 +53,6 @@ module.exports = {
       }
     });
     auth_response = JSON.parse(auth_response);
-
     if(auth_response.access_token) {
       const access_token = auth_response.access_token;
 
@@ -81,7 +79,7 @@ module.exports = {
    * @return {Promise}
    */
 
-  payment: async (body) => {
+  payment: async (user, body) => {
     var auth = new Buffer(strapi.config.PAYPAL_CLIENT_ID + ':' + strapi.config.PAYPAL_SECRET).toString('base64');
     var auth_response = await doRequest({
       method: 'POST',
@@ -106,7 +104,52 @@ module.exports = {
         },
         json: body
       });
-      return payment_create;
+      if(payment_create && payment_create.plan) {
+        var plan_details = await doRequest({
+          method: 'GET',
+          url: `https://api.sandbox.paypal.com/v1/payments/billing-plans/${body.planId}`,
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+            'Content-Type': 'application/json'
+          },
+          json: body
+        });
+        const plan = payment_create.plan;
+        const planDefination = plan.payment_definitions[0];
+        const agreement = payment_create.agreement_details;
+        const planDetails = {
+          id: payment_create.id,
+          name: plan_details.name,
+          details: planDefination.details,
+          description: plan_details.description,
+          published: payment_create.start_date,
+          statement_descriptor: payment_create.state,
+          trial_period_days: 0,
+          amount: planDefination.amount.value,
+          currency: plan.currency_code,
+          interval: planDefination.frequency,
+          interval_count: planDefination.frequency_interval,
+          type: 'subscription',
+          created_at: agreement.next_billing_date,
+          updated_at: agreement.next_billing_date,
+        };
+        let profileData = await Profile.findOne({user: user._id});
+        const profile = await Profile.findOneAndUpdate(
+          {user: user._id},
+          {$set:
+            {
+              plan: planDetails,
+              uniqueVisitorQouta: profileData.uniqueVisitorQouta + Number(body.description),
+              uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(body.description)
+            }
+          },
+          {new: true}
+        );
+        return profile;
+      } else {
+        return payment_create;
+      }
+
     } else {
       return { error: true, msg: auth_response.error };
     }

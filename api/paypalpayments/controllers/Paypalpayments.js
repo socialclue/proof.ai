@@ -28,7 +28,7 @@ module.exports = {
    */
 
   payment: async (ctx) => {
-    const data = await strapi.services.paypalpayments.payment(ctx.request.body);
+    const data = await strapi.services.paypalpayments.payment(ctx.state.user, ctx.request.body);
 
     // Send 200 `ok`
     ctx.send(data);
