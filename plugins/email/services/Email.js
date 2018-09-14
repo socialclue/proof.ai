@@ -558,7 +558,7 @@ module.exports = {
                   <div>Hey ${name},</div>
                   <div>&nbsp;</div>
                   <div>Your plan has been upgrade to ${planDetails.name}.</div>
-                  <div>You have got ${planDetails.uniqueVisitorQouta} Unique Visitors : .</div>
+                  <div>You have got ${planDetails.uniqueVisitorQouta} Unique Visitors.</div>
                   <div>Unique Visitors Quota Left: ${planDetails.uniqueVisitorsQoutaLeft}.</div>
               </td>
             </tr>

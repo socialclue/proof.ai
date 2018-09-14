@@ -70,7 +70,6 @@ module.exports = {
     } else {
       return { error: true, msg: auth_response.error };
     }
-
   },
 
   /**
@@ -144,6 +143,15 @@ module.exports = {
             }
           },
           {new: true}
+        );
+        await strapi.plugins.email.services.email.planUpgrade(
+          user.email,
+          user.username,
+          {
+            name: planDetails.name,
+            uniqueVisitorQouta: profileData.uniqueVisitorQouta,
+            uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(body.description)
+          }
         );
         return profile;
       } else {
