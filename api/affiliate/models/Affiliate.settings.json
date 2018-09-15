@@ -1,6 +1,6 @@
 {
   "connection": "default",
-  "collectionName": "",
+  "collectionName": "affiliate",
   "info": {
     "name": "affiliate",
     "description": ""
@@ -19,6 +19,18 @@
     },
     "expiry": {
       "type": "date",
+      "multiple": false
+    },
+    "affiliatedUser": {
+      "model": "user",
+      "plugin": "users-permissions"
+    },
+    "affiliatedByUser": {
+      "model": "user",
+      "plugin": "users-permissions"
+    },
+    "status": {
+      "type": "string",
       "multiple": false
     }
   }

@@ -9,11 +9,29 @@
 const _ = require('lodash');
 const crypto = require('crypto');
 const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-var shortid = require('shortid');
+const shortid = require('shortid');
+const moment = require('moment');
+
+const createAffiliate = async function(userId, affiliateId) {
+  const affiliateUser = await strapi.query('user', 'users-permissions').findOne({affiliateId: affiliateId});
+  if(affiliateUser && userId) {
+    const affiliateDetails = {
+      amount: '30',
+      withdrawn: false,
+      expiry: moment().utc(),
+      affiliatedUser: userId,
+      affiliatedByUser: affiliateUser._id,
+      status: 'active'
+    };
+    const newAffiliate = await Affiliate.create(affiliateDetails);
+    return newAffiliate;
+  } else {
+    return;
+  }
+};
 
 module.exports = {
   callback: async (ctx) => {
-    console.log(ctx.request.body);
     const provider = ctx.params.provider || 'local';
     const params = ctx.request.body;
     const store = await strapi.store({
@@ -305,6 +323,9 @@ module.exports = {
     try {
       params['affiliateId'] = shortid.generate();
       const user = await strapi.query('user', 'users-permissions').create(params);
+      if(params.affiliate) {
+        await createAffiliate(user._id, params.affiliate);
+      }
       const jwt = strapi.plugins['users-permissions'].services.jwt.issue(_.pick(user.toJSON ? user.toJSON() : user, ['_id', 'id']))
       const userProfile = {
         uniqueVisitorQouta: 1000,
