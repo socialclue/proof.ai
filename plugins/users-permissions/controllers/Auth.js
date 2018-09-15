@@ -313,7 +313,6 @@ module.exports = {
         plan: null
       };
       userProfile['user'] = user._id;
-      affiliateId: shortid.generate()
       const createProfile = await strapi.services.profile.add(userProfile);
       // Send verification mail to user
       // TODO: Update verification link and token generation technique
