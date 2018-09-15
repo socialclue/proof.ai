@@ -7,6 +7,7 @@
 // Public node modules.
 const _ = require('lodash');
 const request = require('request');
+var shortid = require('shortid');
 
 // Purest strategies.
 const Purest = require('purest');
@@ -84,7 +85,8 @@ exports.connect = (provider, query) => {
         const params = _.assign(profile, {
           provider: provider,
           role: guest._id || guest.id,
-          path: '/getting-started'
+          path: '/getting-started',
+          affiliateId: shortid.generate()
         });
         const createdUser = await strapi.query('user', 'users-permissions').create(params);
         userProfile['user'] = createdUser._id;

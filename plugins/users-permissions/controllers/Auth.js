@@ -310,8 +310,7 @@ module.exports = {
         uniqueVisitorQouta: 1000,
         uniqueVisitors: 1000,
         uniqueVisitorsQoutaLeft: 1000,
-        plan: null,
-
+        plan: null
       };
       userProfile['user'] = user._id;
       affiliateId: shortid.generate()
