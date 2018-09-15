@@ -9,10 +9,6 @@
     "timestamps": true
   },
   "attributes": {
-    "user": {
-      "model": "user",
-      "plugin": "users-permissions"
-    },
     "amount": {
       "type": "integer",
       "multiple": false
@@ -24,10 +20,6 @@
     "expiry": {
       "type": "date",
       "multiple": false
-    },
-    "userAdded": {
-      "model": "user",
-      "plugin": "users-permissions"
     }
   }
 }
