@@ -612,7 +612,7 @@ module.exports = {
      * @param affiliateDetails
      * @returns {Promise<*>}
      */
-    planUpgrade: async (email, name, affiliateDetails) =>  {
+    affiliateRequest: async (email, name, affiliateDetails) =>  {
         const mailSub = "Signup Invite"
         const content =`
           <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
