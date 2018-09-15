@@ -84,7 +84,7 @@ exports.connect = (provider, query) => {
         const params = _.assign(profile, {
           provider: provider,
           role: guest._id || guest.id,
-          path: '/checkout'
+          path: '/getting-started'
         });
         const createdUser = await strapi.query('user', 'users-permissions').create(params);
         userProfile['user'] = createdUser._id;
