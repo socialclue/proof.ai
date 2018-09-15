@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/affiliate",
+      "handler": "Affiliate.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/affiliate/:_id",
+      "handler": "Affiliate.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/affiliate",
+      "handler": "Affiliate.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/affiliate/:_id",
+      "handler": "Affiliate.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/affiliate/:_id",
+      "handler": "Affiliate.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}
