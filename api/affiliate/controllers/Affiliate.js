@@ -9,6 +9,19 @@
 module.exports = {
 
   /**
+   * Share affiliate link.
+   *
+   * @return {Object|Array}
+   */
+
+  share: async (ctx) => {
+    const data = await strapi.services.affiliate.share(ctx.state.user, ctx.request.body);
+
+    // Send 200 `ok`
+    ctx.send(data);
+  },
+
+  /**
    * Retrieve affiliate records.
    *
    * @return {Object|Array}

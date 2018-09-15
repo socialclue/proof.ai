@@ -1,6 +1,14 @@
 {
   "routes": [
     {
+      "method": "POST",
+      "path": "/affiliate/share",
+      "handler": "Affiliate.share",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "GET",
       "path": "/affiliate",
       "handler": "Affiliate.find",

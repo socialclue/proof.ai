@@ -12,6 +12,16 @@ const _ = require('lodash');
 module.exports = {
 
   /**
+   * Promise to share affiliate link.
+   *
+   * @return {Promise}
+   */
+
+  share: async(user, body) => {
+    return await strapi.plugins.email.services.email.affiliateRequest(body.email, user.username, {affiliateId: user.affiliateId});
+  },
+
+  /**
    * Promise to fetch all affiliates.
    *
    * @return {Promise}
