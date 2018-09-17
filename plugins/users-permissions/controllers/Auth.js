@@ -331,9 +331,10 @@ module.exports = {
         uniqueVisitorQouta: 1000,
         uniqueVisitors: 1000,
         uniqueVisitorsQoutaLeft: 1000,
-        plan: null
+        plan: null,
+        user: user._id
       };
-      userProfile['user'] = user._id;
+      // userProfile['user'] = user._id;
       const createProfile = await strapi.services.profile.add(userProfile);
       // Send verification mail to user
       // TODO: Update verification link and token generation technique

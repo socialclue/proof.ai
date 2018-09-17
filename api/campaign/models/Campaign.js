@@ -47,7 +47,7 @@ module.exports = {
         })
       )
     );
-
+    console.log(saved_state, result.profile, '===================>cool');
     const present_state = saved_state.present_state;
     const future_state = saved_state.future_state;
 
