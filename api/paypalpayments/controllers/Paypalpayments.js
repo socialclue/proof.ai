@@ -35,6 +35,19 @@ module.exports = {
   },
 
   /**
+   * withdraw paypal affiliate payment.
+   *
+   * @return {Object}
+   */
+
+  withdraw: async (ctx) => {
+    const data = await strapi.services.paypalpayments.withdraw(ctx.state.user, ctx.request.body);
+
+    // Send 200 `ok`
+    ctx.send(data);
+  },
+
+  /**
    * Create a/an paypalpayments record.
    *
    * @return {Object}

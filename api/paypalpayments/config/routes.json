@@ -18,6 +18,14 @@
     },
     {
       "method": "POST",
+      "path": "/paypalpayments/withdraw",
+      "handler": "Paypalpayments.withdraw",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
       "path": "/paypalpayments",
       "handler": "Paypalpayments.create",
       "config": {
