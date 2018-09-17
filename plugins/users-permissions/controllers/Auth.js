@@ -303,6 +303,8 @@ module.exports = {
 
     if (isEmail) {
       params.identifier = params.identifier.toLowerCase();
+    } else {
+      params.email = params.email.toLowerCase();
     }
 
     params.role = role._id || role.id;
@@ -334,7 +336,6 @@ module.exports = {
         plan: null,
         user: user._id
       };
-      // userProfile['user'] = user._id;
       const createProfile = await strapi.services.profile.add(userProfile);
       // Send verification mail to user
       // TODO: Update verification link and token generation technique
