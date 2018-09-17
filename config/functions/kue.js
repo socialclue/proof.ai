@@ -14,7 +14,7 @@ const q = kue.createQueue({
   prefix: 'q',
   redis: {
     port: strapi.config.redisPort,
-    host: "35.237.30.58",
+    host: "10.15.248.87",
     auth: strapi.config.redisPassword,
     db: strapi.config.redisDb, // if provided select a non-default redis db
     options: {
