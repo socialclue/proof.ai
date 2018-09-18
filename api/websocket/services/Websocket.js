@@ -15,7 +15,7 @@ const client = elasticsearch.Client({
   log: 'trace'
 });
 
-const webSocketStream = fs.createWriteStream('/var/lib/docker/containers/websocket.log');
+const webSocketStream = fs.createWriteStream('/tmp/log/websocket.log');
 
 // const bunyan = require('bunyan');
 // const LoggingBunyan = require('@google-cloud/logging-bunyan').LoggingBunyan;
