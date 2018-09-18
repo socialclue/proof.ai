@@ -9,7 +9,7 @@
 // Public dependencies.
 const _ = require('lodash');
 const domainPing = require("domain-ping");
-	
+
 let ruleDefault = {
 	"hideNotification" : true,
 	"loopNotification" : true,
@@ -443,11 +443,19 @@ module.exports = {
           return err;
 				else {
 					await pagesValues.map(async page => {
+						let productUrl = page.productUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/');
+						console.log(productUrl, campaignValue.websiteUrl, '==================productUrl');
+
+						productUrl = productUrl.join('/').replace(campaignValue.websiteUrl,'');
+						let captureUrl = page.captureUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/');
+						console.log(captureUrl, '==================productUrl');
+						captureUrl = captureUrl.join('/').replace(campaignValue.websiteUrl,'');
+						console.log(productUrl, captureUrl);
 						const pages = {
 				      name: page.productName,
 				      productName: page.productName,
-				      productUrl: page.productUrl,
-				      captureUrl: page.captureUrl,
+				      productUrl: productUrl,
+				      captureUrl: captureUrl,
 				      campaign: data._id,
 				      domain: data.websiteUrl,
 				      rule: result._id,
@@ -500,10 +508,12 @@ module.exports = {
 	        search
 	     	);
     	});
+			return data;
 		} catch(err) {
 			console.log(err);
+			return {err: true};
 		}
-    return data;
+
   },
 
   /**

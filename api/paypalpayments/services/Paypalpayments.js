@@ -171,7 +171,6 @@ module.exports = {
    */
 
   withdraw: async (user, body) => {
-    // console.log(user, body);
     var auth = new Buffer(strapi.config.PAYPAL_CLIENT_ID + ':' + strapi.config.PAYPAL_SECRET).toString('base64');
     var auth_response = await doRequest({
       method: 'POST',
@@ -183,15 +182,15 @@ module.exports = {
         grant_type: 'client_credentials'
       }
     });
+
     auth_response = JSON.parse(auth_response);
-    console.log(auth_response, '====================>auth_response');
     if(auth_response.access_token) {
       const access_token = auth_response.access_token;
       var payment_create = await doRequest({
         method: 'POST',
-        url:`https://api.sandbox.paypal.com/v1/payments/payouts`,
+        url: `https://api.sandbox.paypal.com/v1/payments/payouts?sync_mode=false`,
         headers: {
-          Authorization: 'Bearer ' + access_token,
+          'Authorization': 'Bearer ' + access_token,
           'Content-Type': 'application/json'
         },
         json: {
@@ -208,7 +207,7 @@ module.exports = {
                 "currency": "USD"
               },
               "note": "Thanks for your patronage!",
-              // "sender_item_id": "201403140001",
+              "sender_item_id": "201803190001",
               "receiver": body.email
             }
           ]
