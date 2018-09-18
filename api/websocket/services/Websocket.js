@@ -9,13 +9,27 @@ const moment = require('moment');
 const uuidv1 = require('uuid/v1');
 
 const client = elasticsearch.Client({
-  host: '35.202.85.190:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
+  host: '10.15.254.94:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
   requestTimeout: Infinity, // Tested
   keepAlive: true, // Tested
   log: 'trace'
 });
 
-const webSocketStream = fs.createWriteStream('/tmp/log/websocket.log');
+const webSocketStream = fs.createWriteStream('/var/lib/docker/containers/websocket.log');
+
+// const bunyan = require('bunyan');
+// const LoggingBunyan = require('@google-cloud/logging-bunyan').LoggingBunyan;
+//
+//
+// const loggingBunyan = new LoggingBunyan();
+//
+// const logger = bunyan.createLogger({
+//   name: 'websocket-logging',
+//   streams: [
+//     {stream: process.stdout, level: 'info'},
+//     loggingBunyan.stream('info')
+//   ],
+// });
 
 /**
 *gets enrichment data of a user
@@ -85,6 +99,7 @@ const campaignLogger = function(value, done) {
           userDetail['username'] = userDetail.username ? userDetail.username : userInfo.username;
           userDetail['profile_pic'] = userInfo.profile_pic;
 
+          console.log(userDetail, '============>userDetail');
           /**
           *log data to elasticsearch
           **/
@@ -111,7 +126,7 @@ const campaignLogger = function(value, done) {
 
 module.exports =  {
   /**
-   * We are logging data to filebeats and then sending it to logstash and to elasticsearch
+   * We are logging data to google cloud stackdriver and then  filebeats can pull it  and then sending it to logstash and thus to elasticsearch
    * @param msg
    */
   log : async(msg) => {
@@ -119,6 +134,7 @@ module.exports =  {
     let message =  formatter + '\n';
 
     if(msg.value && msg.value.event == 'formsubmit') {
+      console.log(msg.value.fingerprint, '==============fingerprint');
       await strapi.config.functions.kue.createJob(msg.value.fingerprint, 'Campaign Logger', 'Logs new form data into Signups index', msg.value, 'high', 3, function(err) {
         if(err)
           console.log(err);

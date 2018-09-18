@@ -1,0 +1,52 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/paypalpayments/agreement",
+      "handler": "Paypalpayments.agreement",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/paypalpayments/payment",
+      "handler": "Paypalpayments.payment",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/paypalpayments/withdraw",
+      "handler": "Paypalpayments.withdraw",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/paypalpayments",
+      "handler": "Paypalpayments.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/paypalpayments/:_id",
+      "handler": "Paypalpayments.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/paypalpayments/:_id",
+      "handler": "Paypalpayments.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

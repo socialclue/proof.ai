@@ -9,11 +9,6 @@
     "timestamps": true
   },
   "attributes": {
-    "user": {
-      "model": "user",
-      "via": "coupon",
-      "plugin": "users-permissions"
-    },
     "type": {
       "type": "string",
       "multiple": false
@@ -29,6 +24,11 @@
     "code": {
       "type": "string",
       "multiple": false
+    },
+    "undefined": {
+      "model": "user",
+      "via": "coupon",
+      "plugin": "users-permissions"
     }
   }
 }

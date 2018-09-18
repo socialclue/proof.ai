@@ -82,6 +82,14 @@
     "path": {
       "type": "string",
       "multiple": false
+    },
+    "affiliateId": {
+      "type": "string",
+      "multiple": false
+    },
+    "affiliatedById": {
+      "type": "string",
+      "multiple": false
     }
   },
   "collectionName": "users-permissions_user"

@@ -2,9 +2,12 @@
   "myCustomConfiguration": "This configuration is accessible through strapi.config.myCustomConfiguration",
   "socketsServerPath": "/web",
   "elasticsearchNode": "elasticsearch:9200",
+  "GOOGLE_APPLICATION_CREDENTIALS":"/Users/saranshsharma/WebstormProjects/influence.io/creds.json",
+  "projectID":"influence-197607",
   "redisPort":"6379",
-  "redisHost":"some-redis",
+  "redisHost":"redis-9w6tb",
   "redisPassword":"",
-  "redisDb":"3"
-
+  "redisDb":"3",
+  "PAYPAL_CLIENT_ID": "AfgLvI8rj81ww-9ql0cBn3xxQzzYx_EvCQJmXynz-7AYoisNW7QwLlCRfG0FMd8FGA2lDPX3k1ZHBOcC",
+  "PAYPAL_SECRET": "EIjb_SsUIu8S3Zkz97hs9ZrC62oyw9d7K2TvHxdYjfveHriIi-BdY2wWLpqlekmTFNiNioc-ZA-3QHfV"
 }

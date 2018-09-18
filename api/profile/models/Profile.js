@@ -34,7 +34,19 @@ module.exports = {
 
   // After creating a value.
   // Fired after `insert` query.
-  // afterCreate: async (model, result) => {},
+  afterCreate: async (model, result) => {
+    const saved_state = JSON.parse(
+      JSON.stringify(
+        await strapi.api.state.services.state.fetch({
+          user: result.user
+        })
+      )
+    );
+    saved_state.profile = result._id;
+
+    // Update state with new values
+    await strapi.api.state.services.state.edit({_id: saved_state._id}, saved_state);
+  },
 
   // Before updating a value.
   // Fired before an `update` query.

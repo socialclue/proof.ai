@@ -21,10 +21,6 @@
       "type": "json",
       "multiple": false
     },
-    "user": {
-      "model": "user",
-      "plugin": "users-permissions"
-    },
     "profile": {
       "model": "profile"
     },
