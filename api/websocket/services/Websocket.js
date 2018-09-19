@@ -9,7 +9,7 @@ const moment = require('moment');
 const uuidv1 = require('uuid/v1');
 
 const client = elasticsearch.Client({
-  host: '10.15.254.94:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
+  host: '104.196.139.231:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
   requestTimeout: Infinity, // Tested
   keepAlive: true, // Tested
   log: 'trace'
@@ -62,15 +62,20 @@ const getUser = async function(email, callback) {
 *Kue job function to log new user into ES
 **/
 const campaignLogger = function(value, done) {
+  console.log(value, '========value');
   Campaign.findOne(
     { trackingId: value.trackingId },
     { rule: 1, websiteUrl: 1 }
   )
   .exec()
   .then(async campaign => {
+
     let captureLeads = await strapi.api.notificationpath.services.notificationpath.findRulesPath({_id: campaign.rule, type: 'lead' });
+
     captureLeads = captureLeads.map(lead => lead.url);
-    if(captureLeads.indexOf(value.source.url.pathname) > 0 ) {
+    console.log(captureLeads.indexOf(value.source.url.pathname), '=======captureLeads');
+    if(captureLeads.indexOf(value.source.url.pathname) >= 0 ) {
+      console.log('===========inside');
       let form = value.form;
       let email = form.email || form.EMAIL || form.Email || form.your-email;
       let username = form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||

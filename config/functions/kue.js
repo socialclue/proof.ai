@@ -17,11 +17,11 @@ const q = kue.createQueue({
     createClientFactory: function () {
       return new Redis.Cluster([{
         port: 6379,
-        host: 'redis-cluster'
+        host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost
 
       }, {
         port: 16379,
-        host: 'redis-cluster'
+        host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost
       }]);
     }
     // port: strapi.config.redisPort,
@@ -33,6 +33,9 @@ const q = kue.createQueue({
     // }
   }
 });
+
+
+kue.app.listen(3002);
 
 
 module.exports = {
