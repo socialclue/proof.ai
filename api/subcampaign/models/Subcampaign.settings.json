@@ -54,6 +54,14 @@
     "productImage": {
       "type": "string",
       "multiple": false
+    },
+    "promote": {
+      "type": "string",
+      "multiple": false
+    },
+    "promote-priority": {
+      "type": "string",
+      "multiple": false
     }
   }
 }

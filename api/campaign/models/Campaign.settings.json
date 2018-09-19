@@ -73,6 +73,10 @@
     "shopify": {
       "type": "json",
       "multiple": false
+    },
+    "promote": {
+      "type": "boolean",
+      "multiple": false
     }
   }
 }

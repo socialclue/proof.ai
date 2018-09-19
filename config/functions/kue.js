@@ -1,4 +1,5 @@
 const kue = require( "kue" );
+var Redis = require('ioredis');
 
 /**
  * Make a global operator which can be used as like strapi.Kue.methods()
@@ -13,13 +14,23 @@ const kue = require( "kue" );
 const q = kue.createQueue({
   prefix: 'q',
   redis: {
-    port: strapi.config.redisPort,
-    host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost,
-    auth: strapi.config.redisPassword,
-    db: strapi.config.redisDb, // if provided select a non-default redis db
-    options: {
-      // see https://github.com/mranney/node_redis#rediscreateclient
+    createClientFactory: function () {
+      return new Redis.Cluster([{
+        port: 6379,
+        host: 'redis-cluster'
+
+      }, {
+        port: 16379,
+        host: 'redis-cluster'
+      }]);
     }
+    // port: strapi.config.redisPort,
+    // host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost,
+    // auth: strapi.config.redisPassword,
+    // db: strapi.config.redisDb, // if provided select a non-default redis db
+    // options: {
+      // see https://github.com/mranney/node_redis#rediscreateclient
+    // }
   }
 });
 
