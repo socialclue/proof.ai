@@ -93,7 +93,7 @@ const campaignLogger = function(value, done) {
         latitude: geo?geo.latitude:null,
         longitude: geo?geo.longitude:null,
         trackingId: value.trackingId,
-        host: campaign.websiteUrl,
+        host: value.source.url.host,
         path: value.source.url.pathname
       };
 
