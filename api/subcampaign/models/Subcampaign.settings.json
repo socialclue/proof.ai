@@ -59,7 +59,7 @@
       "type": "string",
       "multiple": false
     },
-    "promote-priority": {
+    "promotePriority": {
       "type": "string",
       "multiple": false
     }
