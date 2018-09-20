@@ -28,7 +28,7 @@ module.exports = {
    */
 
   find: async (ctx) => {
-    const data = await strapi.services.affiliate.fetchAll(ctx.query);
+    const data = await strapi.services.affiliate.fetchAll(ctx.state.user);
 
     // Send 200 `ok`
     ctx.send(data);

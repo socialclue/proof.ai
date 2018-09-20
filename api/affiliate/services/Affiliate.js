@@ -27,8 +27,15 @@ module.exports = {
    * @return {Promise}
    */
 
-  fetchAll: (params) => {
-    const convertedParams = strapi.utils.models.convertParams('affiliate', params);
+  fetchAll: (user) => {
+    // const profile = await Profile.findOne({user: params?params:null})
+    //   .exec()
+    //   .then(data => data?data._id:null);
+
+    const query = {
+      affiliatedByUser: user?user._id:null
+    };
+    const convertedParams = strapi.utils.models.convertParams('affiliate', query);
 
     return Affiliate
       .find()

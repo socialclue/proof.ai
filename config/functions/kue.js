@@ -29,7 +29,7 @@ const q = kue.createQueue({
     // auth: strapi.config.redisPassword,
     // db: strapi.config.redisDb, // if provided select a non-default redis db
     // options: {
-      // see https://github.com/mranney/node_redis#rediscreateclient
+    //   // see https://github.com/mranney/node_redis#rediscreateclient
     // }
   }
 });
