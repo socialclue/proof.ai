@@ -55,7 +55,8 @@ module.exports = {
         log: 1,
         campaignName: 1,
         logTime: 1,
-        rule: 1
+        rule: 1,
+        promote: 1
       }
     )
     .populate({
@@ -305,7 +306,7 @@ module.exports = {
             return { response, rule, configurations };
           return { response, rule, configurations, userDetails };
         } else {
-          return { response, rule, configurations }
+          return { response, rule, configurations };
         }
       } else
         return { response, rule, configurations };

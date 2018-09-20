@@ -73,7 +73,6 @@ const campaignLogger = function(value, done) {
     let captureLeads = await strapi.api.notificationpath.services.notificationpath.findRulesPath({_id: campaign.rule, type: 'lead' });
 
     captureLeads = captureLeads.map(lead => lead.url);
-    console.log(captureLeads.indexOf(value.source.url.pathname), '=======captureLeads');
     if(captureLeads.indexOf(value.source.url.pathname) >= 0 ) {
       console.log('===========inside');
       let form = value.form;
@@ -81,7 +80,7 @@ const campaignLogger = function(value, done) {
       let username = form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||
         form.username || form.USERNAME || form.UserName || form.Username ||
         form.FNAME || form.Fname || form.fname || form.FName || form['your-name'] ||
-        form.lastName || form.lastname || form.LastName || form.LASTNAME || "Anonymous";
+        form.lastName || form.lastname || form.LastName || form.LASTNAME || email.match(/^([^@]*)@/)[1] || "Anonymous";
       let geo = value.geo;
 
       let userDetail = {
