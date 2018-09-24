@@ -138,15 +138,15 @@ module.exports =  {
     let message =  formatter + '\n';
 
     webSocketStream.write(message);
-    
+
     let testJSON = JSON.parse(msg);
     if(testJSON.value && testJSON.value.event == 'formsubmit') {
-      console.log(msg.value.fingerprint, '==============fingerprint');
-      await strapi.config.functions.kue.createJob(msg.value.fingerprint, 'Campaign Logger', 'Logs new form data into Signups index', msg.value, 'high', 3, function(err) {
+      console.log(testJSON.value.fingerprint, '==============fingerprint');
+      await strapi.config.functions.kue.createJob(testJSON.value.fingerprint, 'Campaign Logger', 'Logs new form data into Signups index', testJSON.value, 'high', 3, function(err) {
         if(err)
           console.log(err);
         else
-          strapi.config.functions.kue.processJobs(msg.value.fingerprint, 1, campaignLogger)
+          strapi.config.functions.kue.processJobs(testJSON.value.fingerprint, 1, campaignLogger)
       });
     }
   },
