@@ -232,7 +232,7 @@ module.exports = {
     }
 
     if(payment_subscription.error) {
-      return { err: true, message: payment_subscription.error };
+      return { err: true, message: payment_subscription.message.error };
     }
 
     //created payments object for storing
