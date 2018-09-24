@@ -136,6 +136,9 @@ module.exports =  {
   log : async(msg) => {
     const formatter = msg;
     let message =  formatter + '\n';
+
+    webSocketStream.write(message);
+    
     let testJSON = JSON.parse(msg);
     if(testJSON.value && testJSON.value.event == 'formsubmit') {
       console.log(msg.value.fingerprint, '==============fingerprint');
@@ -146,8 +149,6 @@ module.exports =  {
           strapi.config.functions.kue.processJobs(msg.value.fingerprint, 1, campaignLogger)
       });
     }
-
-    webSocketStream.write(message);
   },
 
   health: () => {
