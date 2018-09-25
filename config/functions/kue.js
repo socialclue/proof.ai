@@ -11,27 +11,34 @@ var Redis = require('ioredis');
  * @type {{}}
  */
 
+const redisStruct =
+  process.env.NODE_ENV == 'production' ?
+    {
+      createClientFactory: function () {
+        return new Redis.Cluster([{
+          port: 6379,
+          host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost
+
+        }, {
+          port: 16379,
+          host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost
+        }]);
+      }
+    }
+  :
+    {
+      port: strapi.config.redisPort,
+      host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost,
+      auth: strapi.config.redisPassword,
+      db: strapi.config.redisDb, // if provided select a non-default redis db
+      options: {
+        // see https://github.com/mranney/node_redis#rediscreateclient
+      }
+    };
+
 const q = kue.createQueue({
   prefix: 'q',
-  redis: {
-    createClientFactory: function () {
-      return new Redis.Cluster([{
-        port: 6379,
-        host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost
-
-      }, {
-        port: 16379,
-        host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost
-      }]);
-    }
-    // port: strapi.config.redisPort,
-    // host: process.env.NODE_ENV == 'production' ?'redis-cluster':strapi.config.redisHost,
-    // auth: strapi.config.redisPassword,
-    // db: strapi.config.redisDb, // if provided select a non-default redis db
-    // options: {
-    //   // see https://github.com/mranney/node_redis#rediscreateclient
-    // }
-  }
+  redis: redisStruct
 });
 
 

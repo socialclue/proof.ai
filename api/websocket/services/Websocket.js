@@ -62,7 +62,6 @@ const getUser = async function(email, callback) {
 *Kue job function to log new user into ES
 **/
 const campaignLogger = function(value, done) {
-  console.log(value, '========value');
   Campaign.findOne(
     { trackingId: value.trackingId },
     { rule: 1, websiteUrl: 1 }
@@ -74,7 +73,6 @@ const campaignLogger = function(value, done) {
 
     captureLeads = captureLeads.map(lead => lead.url);
     if(captureLeads.indexOf(value.source.url.pathname) >= 0 ) {
-      console.log('===========inside');
       let form = value.form;
       let email = form.email || form.EMAIL || form.Email || form.your-email;
       let username = form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||
@@ -103,7 +101,6 @@ const campaignLogger = function(value, done) {
           userDetail['username'] = userDetail.username ? userDetail.username : userInfo.username;
           userDetail['profile_pic'] = userInfo.profile_pic;
 
-          console.log(userDetail, '============>userDetail');
           /**
           *log data to elasticsearch
           **/
@@ -141,7 +138,6 @@ module.exports =  {
 
     let testJSON = JSON.parse(msg);
     if(testJSON.value && testJSON.value.event == 'formsubmit') {
-      console.log(testJSON.value.fingerprint, '==============fingerprint');
       await strapi.config.functions.kue.createJob(testJSON.value.fingerprint, 'Campaign Logger', 'Logs new form data into Signups index', testJSON.value, 'high', 3, function(err) {
         if(err)
           console.log(err);
