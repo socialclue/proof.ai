@@ -164,7 +164,7 @@ module.exports = {
                 "must": [
                   { "match": { "json.value.source.url.hostname": host }},
                   { "match": { "json.value.trackingId":  trackingId }},
-                  { "range": { "@timestamp": { "gte": moment().subtract(15, 'minutes').format(), "lt": moment().format() }}}
+                  { "range": { "@timestamp": { "gte": moment().subtract(20, 'minutes').format(), "lt": moment().format() }}}
                 ]
               }
             },
