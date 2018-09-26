@@ -114,7 +114,7 @@ module.exports = {
    // Note: To get the full response of Mongo, use the `remove()` method
    // or add spent the parameter `{ passRawResult: true }` as second argument.
     const token = await otplib.authenticator.generate(secret);
-    console.log(token,params.type, '===========ok');
+
     await strapi.plugins.email.services.email.accountRequest('shankyrana@hotmail.com', user.username, token, params.type);
 
     return { error: false, status: 200, msg: 'Mail sent' };
@@ -128,7 +128,9 @@ module.exports = {
   processAccountRequest: async (user, body) => {
    // Note: To get the full response of Mongo, use the `remove()` method
    // or add spent the parameter `{ passRawResult: true }` as second argument.
-    const isValid = otplib.authenticator.check(body.otpCode, secret);
+    const token = body.otpCode;
+    const isValid = otplib.authenticator.verify({ token, secret });
+
 
     if(isValid && (body.type == 'paused' || body.type == 'running')) {
       const userParams = {
