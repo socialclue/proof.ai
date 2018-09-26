@@ -148,6 +148,34 @@ module.exports = {
     }
   },
 
+  resetPassword: async (ctx) => {
+    const params = _.assign({}, ctx.request.body, ctx.params);
+
+    if (params.password && params.passwordConfirmation && params.password === params.passwordConfirmation && params.passwordOld) {
+      const user = ctx.state.user;
+
+      const validateOldPassword = strapi.plugins['users-permissions'].services.user.validatePassword(params.passwordOld, user.password);
+
+      if(!validateOldPassword)
+        return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.invalid' }] }] : 'Old Password Invalid.');
+
+      if (!user) {
+        return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.code.provide' }] }] : 'Invalid request.');
+      }
+
+      user.password =  await strapi.plugins['users-permissions'].services.user.hashPassword(params);
+
+      // Update the user.
+      await strapi.query('user', 'users-permissions').update(user);
+
+      ctx.send({ message: 'Password updated', error: false });
+    } else if (params.password && params.passwordConfirmation && params.password !== params.passwordConfirmation) {
+      return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.password.matching' }] }] : 'Passwords do not match.');
+    } else {
+      return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.params.provide' }] }] : 'Incorrect params provided.');
+    }
+  },
+
   /**
    * Verify a/an user email.
    *
