@@ -114,8 +114,21 @@ module.exports = {
     else
       values['status'] = 'unverified';
 
-    const data = await Notificationpath.create(values);
-    return data;
+    const testDoc = {
+      url: values.url,
+      domain: values.domain,
+      campaignName: values.campaignName,
+      type: values.type
+    };
+    console.log(testDoc);
+    const checkPath = await Notificationpath.findOne(testDoc);
+    console.log(checkPath,'==============checkPath');
+    if(checkPath) {
+      return { message: 'Path already added', error: true };
+    } else {
+      const data = await Notificationpath.create(values);
+      return data;
+    }
   },
 
   /**
