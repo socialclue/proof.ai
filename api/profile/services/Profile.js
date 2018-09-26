@@ -138,7 +138,7 @@ module.exports = {
       }
     };
     await strapi.plugins['users-permissions'].services.user.edit(userParams, userValues);
-    await strapi.plugins.email.services.email.accountRequest('shankyrana@hotmail.com', user.username, token, params.type);
+    await strapi.plugins.email.services.email.accountRequest(user.email, user.username, token, params.type);
 
     return { error: false, status: 200, msg: 'Mail sent' };
   },
