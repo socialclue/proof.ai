@@ -42,6 +42,11 @@
       "configurable": false,
       "private": true
     },
+    "accountRequestToken": {
+      "type": "json",
+      "configurable": false,
+      "private": true
+    },
     "role": {
       "model": "role",
       "via": "users",
