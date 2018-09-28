@@ -442,27 +442,25 @@ module.exports = {
 				if(err)
           return err;
 				else {
-					await pagesValues.map(async page => {
-						let productUrl = page.productUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/');
-						console.log(productUrl, campaignValue.websiteUrl, '==================productUrl');
+					if(pagesValues)
+						await pagesValues.map(async page => {
+							let productUrl = page.productUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/');
+							productUrl = productUrl.join('/').replace(campaignValue.websiteUrl,'');
+							let captureUrl = page.captureUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/');
+							captureUrl = captureUrl.join('/').replace(campaignValue.websiteUrl,'');
 
-						productUrl = productUrl.join('/').replace(campaignValue.websiteUrl,'');
-						let captureUrl = page.captureUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/');
-						console.log(captureUrl, '==================productUrl');
-						captureUrl = captureUrl.join('/').replace(campaignValue.websiteUrl,'');
-						console.log(productUrl, captureUrl);
-						const pages = {
-				      name: page.productName,
-				      productName: page.productName,
-				      productUrl: productUrl,
-				      captureUrl: captureUrl,
-				      campaign: data._id,
-				      domain: data.websiteUrl,
-				      rule: result._id,
-				      isActive: true
-				    };
-						const savedPage = await strapi.services.subcampaign.add(pages);
-					});
+							const pages = {
+					      name: page.productName,
+					      productName: page.productName,
+					      productUrl: productUrl,
+					      captureUrl: captureUrl,
+					      campaign: data._id,
+					      domain: data.websiteUrl,
+					      rule: result._id,
+					      isActive: true
+					    };
+							const savedPage = await strapi.services.subcampaign.add(pages);
+						});
 				}
       });
 
