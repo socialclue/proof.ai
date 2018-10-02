@@ -103,11 +103,53 @@ let getSignUps = async function(index, trackingId, type, host, callback) {
 
 module.exports = {
 
-  /**
-   * Promise to fetch all user campaigns.
-   *
-   * @return {Promise}
-   */
+	/**
+		* @api {get} /campaign Fetch user's campaigns details
+		* @apiVersion 0.0.1
+		* @apiName fetchUserCampaigns
+		* @apiGroup Campaign
+		* @apiPermission Customer
+		*
+		*
+		* @apiParam {Object} params Id of user requesting the details.
+		*
+		* @apiExample Example usage:
+		* curl -H "Authorization: Bearer {Token}" -i http://localhost:1337/campaign
+		*
+		* @apiSuccess {ObjectId}   _id                      Object Id of Affiliate.
+		* @apiSuccess {String}     campaignName             Campaign name.
+		* @apiSuccess {String}     websiteUrl               Campaign website URL.
+		* @apiSuccess {Integer}    averageCustomer          Number of average customer visits before campaign creation.
+		* @apiSuccess {Object}     profile           				User's profile.
+		* @apiSuccess {Boolean}    isActive         				Campaign active status.
+		* @apiSuccess {String}     trackingId               Campaign Tracking Id.
+		* @apiSuccess {Object}     rule               			Rule connected to the campaign.
+		* @apiSuccess {Date}     	 logTime               		Time when users details were logged.
+		* @apiSuccess {Integer}    uniqueVisitors           Uniques visitors on the website.
+		* @apiSuccess {Object}     webhooks               	Webhook connected to the campaign.
+		* @apiSuccess {Object}     shopify               		Shopify connected to the campaign.
+		* @apiSuccess {String}     health               		Health of the campaign.
+		* @apiSuccess {String}     campaignType             Type of campaign.
+		* @apiSuccess {String}     promote               		Whether the page campaign have promotion pages.
+		* @apiSuccess {Date}       createdAt                Affiliate creation date.
+		* @apiSuccess {Date}       updatedAt                Affiliate updation date.
+		*
+		* @apiError Unauthorized Only authenticated customer can fetch single campaign.
+		* @apiError NotFound   The <code>id</code> of the Campaign was not found.
+		*
+		* @apiErrorExample Response (example):
+		*     HTTP/1.1 401 Unauthorized
+		*     Vary: Origin
+		*     Content-Type: application/json; charset=utf-8
+		*     X-Powered-By: Strapi <strapi.io>
+		*     Content-Length: 66
+		*     Date: Tue, 02 Oct 2018 14:14:54 GMT
+		*     Connection: keep-alive
+		*     {
+		*       "statusCode":401,"error":"Unauthorized","message":"Unauthorized"
+		*     }
+	*/
+
 
   fetchUserCampaigns: async (params) => {
 
