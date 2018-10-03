@@ -171,6 +171,19 @@ module.exports = {
       .populate(_.keys(_.groupBy(_.reject(strapi.models.campaign.associations, {autoPopulate: false}), 'alias')).join(' '));
   },
 
+	findZapierCampaigns: async (apiKey) => {
+		const user = await strapi.plugins['users-permissions'].services.user.fetch({apiKey: apiKey});
+		const profile = await Profile.findOne({user: user?user._id:null});
+
+		if(user && profile) {
+			const campaign = await Campaign.find({ profile: profile._id });
+			return { campaign: campaign };
+		} else {
+			return { error: 'Invalid API key', message: 'Invalid API key' };
+		}
+
+	},
+
   /**
    * Promise to fetch all campaigns.
    *

@@ -95,6 +95,10 @@
     "affiliatedById": {
       "type": "string",
       "multiple": false
+    },
+    "apiKey": {
+      "type": "string",
+      "multiple": false
     }
   },
   "collectionName": "users-permissions_user"

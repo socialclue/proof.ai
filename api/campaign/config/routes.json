@@ -10,6 +10,14 @@
     },
     {
       "method": "GET",
+      "path": "/campaign/zapier",
+      "handler": "Campaign.findZapierCampaigns",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/campaign/:_id",
       "handler": "Campaign.findOne",
       "config": {

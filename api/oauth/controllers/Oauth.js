@@ -65,4 +65,19 @@ module.exports = {
     // Send 201 `created`
     ctx.created(data);
   },
+
+  /**
+   * Authenticate campaign zapier records.
+   *
+   * @return {Object|Array}
+   */
+
+  zapier: async (ctx) => {
+    const apiKey = ctx.request.body.apiKey;
+    const campaignId = ctx.request.body.campaignId;
+    const data = await strapi.services.oauth.zapier(apiKey, campaignId);
+
+    // Send 200 `ok`
+    ctx.send(data);
+  },
 };

@@ -210,5 +210,10 @@ module.exports = {
         return {error: true, message: 'Invalid Access'}
       }
     }
+  },
+
+  zapier: async (apiKey, campaignId) => {
+    const CampaignData = await Campaign.findOne({zapier:{ apiKey: apiKey}, trackingId: campaignId});
+    return CampaignData;
   }
 };

@@ -23,6 +23,20 @@ module.exports = {
   },
 
   /**
+   * Retrieve user campaign zapier records.
+   *
+   * @return {Object|Array}
+   */
+
+  findZapierCampaigns: async (ctx) => {
+    const apiKey = ctx.query.apiKey;
+    const data = await strapi.services.campaign.findZapierCampaigns(apiKey);
+
+    // Send 200 `ok`
+    ctx.send(data);
+  },
+
+  /**
    * Retrieve campaign records.
    *
    * @return {Object|Array}
