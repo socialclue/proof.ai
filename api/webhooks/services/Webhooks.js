@@ -19,19 +19,21 @@ const genGuid = function() {
         s4() + '-' + s4() + s4() + s4();
 };
 
-const addWebhook = async function(campaignInfo) {
-  console.log('connected to webhook');
-  const campaignLead = await Notificationpath.findOne({
-    campaignName: campaignInfo.name,
-    domain: campaignInfo.campaignName,
-    type: 'lead'
-    // url: '/websockets'
-  });
-  console.log(campaignLead, '========>ok');
-  const rule = await Rules.findOne({ campaign: campaignInfo._id });
-  // const checkHook = campaignLeads.filter(lead => lead.url == '/webhooks');
-  console.log(rule, '========rule');
-  if(!campaignLeads) {
+const addWebhook = async function(trackingId) {
+
+  const campaignInfo = await Campaign.findOne({ trackingId: trackingId?trackingId:null });
+  let campaignLead;
+  if(campaignInfo)
+    campaignLead = await Notificationpath.findOne({
+      campaignName: campaignInfo.campaignName,
+      domain: campaignInfo.websiteUrl,
+      type: 'lead',
+      url: '/webhooks'
+    });
+
+  const rule = await Rules.findOne({ campaign: campaignInfo?campaignInfo._id:null });
+
+  if(!campaignLead && campaignInfo) {
     const lead = {
       "url" : "/webhooks",
     	"status" : "verified",
@@ -41,9 +43,10 @@ const addWebhook = async function(campaignInfo) {
     	"domain" : campaignInfo.websiteUrl,
     	"campaignName" : campaignInfo.campaignName
     }
-    console.log(lead, '==========>lead');
+
    await Notificationpath.create(lead);
   }
+  return campaignInfo;
 };
 
 module.exports = {
@@ -88,7 +91,13 @@ module.exports = {
    */
 
   log: async (query, values) => {
-    console.log(query, values, '===============log data');
+
+    if(values.type === 'zapier') {
+      let campaignInfo = await addWebhook(query.trackingId);
+      if(campaignInfo)
+        values['host'] = campaignInfo.websiteUrl;
+    }
+
     const data = {
       "path": "/visitors/events/",
       "value": {
@@ -126,7 +135,7 @@ module.exports = {
         }
       }
     };
-    console.log(data, '========>data');
+
     await strapi.api.websocket.services.websocket.log(JSON.stringify(data));
     return { message: 'logs added', error: false };
   },
