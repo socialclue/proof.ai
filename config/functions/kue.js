@@ -74,7 +74,6 @@ module.exports = {
 
   processJobs: async (jobName, number, fn) => {
     q.process(jobName, number, function(values, done ) {
-      console.log('=================process job');
       fn(values.data.value, done);
     });
   }

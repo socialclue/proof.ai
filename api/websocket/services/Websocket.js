@@ -125,6 +125,10 @@ const campaignLogger = function(value, done) {
   });
 };
 
+const addWebhook = function() {
+  console.log('connected to webhook');
+};
+
 module.exports =  {
   /**
    * We are logging data to google cloud stackdriver and then  filebeats can pull it  and then sending it to logstash and thus to elasticsearch
