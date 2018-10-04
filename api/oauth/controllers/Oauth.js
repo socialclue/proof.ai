@@ -73,9 +73,8 @@ module.exports = {
    */
 
   zapier: async (ctx) => {
-    const apiKey = ctx.request.body.apiKey;
-    const campaignId = ctx.request.body.campaignId;
-    const data = await strapi.services.oauth.zapier(apiKey, campaignId);
+    const apiKey = ctx.query.apiKey;
+    const data = await strapi.services.oauth.zapier(apiKey);
 
     // Send 200 `ok`
     ctx.send(data);

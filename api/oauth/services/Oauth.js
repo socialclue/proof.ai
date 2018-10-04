@@ -212,7 +212,7 @@ module.exports = {
     }
   },
 
-  zapier: async (apiKey, campaignId) => {
+  zapier: async (apiKey) => {
     const authUser = await strapi.plugins['users-permissions'].services.user.fetch({apiKey: apiKey});
     return authUser;
   }
