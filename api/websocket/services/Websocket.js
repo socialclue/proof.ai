@@ -125,32 +125,6 @@ const campaignLogger = function(value, done) {
   });
 };
 
-const addWebhook = async function(campaignInfo) {
-  console.log('connected to webhook');
-  const campaignLead = await Notificationpath.findOne({
-    campaignName: campaignInfo.name,
-    domain: campaignInfo.campaignName,
-    type: 'lead'
-    // url: '/websockets'
-  });
-  console.log(campaignLead, '========>ok');
-  const rule = await Rules.findOne({ campaign: campaignInfo._id });
-  // const checkHook = campaignLeads.filter(lead => lead.url == '/webhooks');
-  console.log(rule, '========rule');
-  if(!campaignLeads) {
-    const lead = {
-      "url" : "/webhooks",
-    	"status" : "verified",
-    	"class" : "primary",
-    	"type" : "lead",
-    	"rule" : rule?rule._id:'',
-    	"domain" : campaignInfo.websiteUrl,
-    	"campaignName" : campaignInfo.campaignName
-    }
-    console.log(lead, '==========>lead');
-   await Notificationpath.create(lead);
-  }
-};
 
 module.exports =  {
   /**
@@ -172,8 +146,6 @@ module.exports =  {
           strapi.config.functions.kue.processJobs(testJSON.value.fingerprint, 1, campaignLogger)
       });
     }
-    // if(campaignInfo && campaignInfo._id)
-    //   addWebhook(campaignInfo);
   },
 
   health: () => {

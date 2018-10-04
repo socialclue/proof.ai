@@ -19,6 +19,33 @@ const genGuid = function() {
         s4() + '-' + s4() + s4() + s4();
 };
 
+const addWebhook = async function(campaignInfo) {
+  console.log('connected to webhook');
+  const campaignLead = await Notificationpath.findOne({
+    campaignName: campaignInfo.name,
+    domain: campaignInfo.campaignName,
+    type: 'lead'
+    // url: '/websockets'
+  });
+  console.log(campaignLead, '========>ok');
+  const rule = await Rules.findOne({ campaign: campaignInfo._id });
+  // const checkHook = campaignLeads.filter(lead => lead.url == '/webhooks');
+  console.log(rule, '========rule');
+  if(!campaignLeads) {
+    const lead = {
+      "url" : "/webhooks",
+    	"status" : "verified",
+    	"class" : "primary",
+    	"type" : "lead",
+    	"rule" : rule?rule._id:'',
+    	"domain" : campaignInfo.websiteUrl,
+    	"campaignName" : campaignInfo.campaignName
+    }
+    console.log(lead, '==========>lead');
+   await Notificationpath.create(lead);
+  }
+};
+
 module.exports = {
 
   /**
@@ -73,7 +100,7 @@ module.exports = {
         "userProfile": null,
         "form": {
           "email": values.email,
-          "name": values.name || values.username || values.firstname
+          "name": values.name || values.username || values.firstname || values.firstName || values.lastName
         },
         "geo": {
           "latitude": values.latitude,
@@ -99,7 +126,7 @@ module.exports = {
         }
       }
     };
-
+    console.log(data, '========>data');
     await strapi.api.websocket.services.websocket.log(JSON.stringify(data));
     return { message: 'logs added', error: false };
   },
