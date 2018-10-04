@@ -14,6 +14,16 @@ const request = require('request');
 
 var server = oauth2orize.createServer();
 
+const genGuid = function() {
+    var s4 = function() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    };
+
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+};
 
 /**
 * Function for http requests
@@ -212,8 +222,38 @@ module.exports = {
     }
   },
 
+  /**
+   * Authenticate API key.
+   *
+   * @return {Promise}
+   */
+
   zapier: async (apiKey) => {
     const authUser = await strapi.plugins['users-permissions'].services.user.fetch({apiKey: apiKey});
     return authUser;
-  }
+  },
+
+  /**
+   * Generate New API key.
+   *
+   * @return {Promise}
+   */
+
+  apiKeyGenerate: async (user) => {
+    if(user) {
+      const apiKey = genGuid();
+      const params = {
+        id: user._id
+      };
+      const values = {
+        apiKey: apiKey
+      }
+      const authUser = await strapi.plugins['users-permissions'].services.user.edit(params, values);
+      return authUser;
+    } else {
+      return { error: true, message: 'User not found' };
+    }
+
+  },
+
 };

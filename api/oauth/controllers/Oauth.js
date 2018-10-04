@@ -79,4 +79,19 @@ module.exports = {
     // Send 200 `ok`
     ctx.send(data);
   },
+
+  /**
+   * Generate new api key.
+   *
+   * @return {Object|Array}
+   */
+
+  apiKeyGenerate: async (ctx) => {
+    const user = ctx.state.user;
+    const data = await strapi.services.oauth.apiKeyGenerate(user);
+
+    // Send 200 `ok`
+    ctx.send(data);
+  },
+
 };
