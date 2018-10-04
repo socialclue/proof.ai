@@ -9,6 +9,17 @@ const _ = require('lodash');
 const request = require('request');
 var shortid = require('shortid');
 
+const genGuid = function() {
+    var s4 = function() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    };
+
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+};
+
 // Purest strategies.
 const Purest = require('purest');
 
@@ -86,7 +97,8 @@ exports.connect = (provider, query) => {
           provider: provider,
           role: guest._id || guest.id,
           path: '/getting-started',
-          affiliateId: shortid.generate()
+          affiliateId: shortid.generate(),
+          apiKey: genGuid()
         });
         const createdUser = await strapi.query('user', 'users-permissions').create(params);
         userProfile['user'] = createdUser._id;

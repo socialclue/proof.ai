@@ -12,6 +12,17 @@ const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
 const shortid = require('shortid');
 const moment = require('moment');
 
+const genGuid = function() {
+    var s4 = function() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    };
+
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+};
+
 const createAffiliate = async function(userId, affiliateId) {
   const affiliateUser = await strapi.query('user', 'users-permissions').findOne({affiliateId: affiliateId});
   if(affiliateUser && userId) {
@@ -352,6 +363,7 @@ module.exports = {
 
     try {
       params['affiliateId'] = shortid.generate();
+      params['apiKey'] = genGuid();
       const user = await strapi.query('user', 'users-permissions').create(params);
       if(params.affiliate) {
         await createAffiliate(user._id, params.affiliate);
