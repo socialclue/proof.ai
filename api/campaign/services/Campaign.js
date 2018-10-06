@@ -171,6 +171,12 @@ module.exports = {
       .populate(_.keys(_.groupBy(_.reject(strapi.models.campaign.associations, {autoPopulate: false}), 'alias')).join(' '));
   },
 
+	/**
+   * Zapier requests for campaigns.
+   *
+   * @return {Promise}
+   */
+
 	findZapierCampaigns: async (apiKey) => {
 		const user = await strapi.plugins['users-permissions'].services.user.fetch({apiKey: apiKey});
 		const profile = await Profile.findOne({user: user?user._id:null});
@@ -430,7 +436,7 @@ module.exports = {
 						  "recentConv" : 5,
 						  "hideAnonymousConversion" : true,
 						  "onlyDisplayNotification" : false,
-							"liveVisitorCount": 0,
+							"liveVisitorCount": 1,
 							"liveVisitorText":'are viewing this site'
 					  };
 

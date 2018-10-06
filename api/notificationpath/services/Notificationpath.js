@@ -120,9 +120,9 @@ module.exports = {
       campaignName: values.campaignName,
       type: values.type
     };
-    console.log(testDoc);
+
     const checkPath = await Notificationpath.findOne(testDoc);
-    console.log(checkPath,'==============checkPath');
+
     if(checkPath) {
       return { message: 'Path already added', error: true };
     } else {
