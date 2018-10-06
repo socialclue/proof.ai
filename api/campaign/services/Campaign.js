@@ -412,7 +412,7 @@ module.exports = {
 						    color: 'lightgrey'
 						  },
 					    "blur" : 0,
-					    "color" : { "r" : 0, "g" : 149, "b" : 247, "a" : 1 },
+					    "color" : { "r" : 102, "g" : 102, "b" : 102, "a" : 1 },
 							"linkColor": {
 						    "r": 0,
 						    "g": 137,
