@@ -62,16 +62,18 @@ var Token, profile, user, campaign, webhook;
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send({
-        websiteUrl: 'servicebot.useinfluence.co',
-        campaignName: 'Acme1',
-        profile: profile._id
+        campaign: {
+          websiteUrl: 'github.useinfluence.co',
+          campaignName: 'Acme1',
+          profile: profile._id
+        }
       })
       .expect(201)
       .expect('Content-Type', /json/)
       .then((data, err) => {
         if(data.error)
           throw data.error;
-        campaign = data.body;
+        campaign = data.body.data;
       });
     });
   });
@@ -166,6 +168,26 @@ var Token, profile, user, campaign, webhook;
     it('it should delete webhook', function *() {
       yield request(strapi.config.url)
         .delete(`/webhooks/${webhook._id}`)
+        .set('Authorization', `Bearer ${Token}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((data, err) => {
+          if(data.error)
+            throw data.error;
+        });
+    });
+  });
+
+
+/**
+  * Test Delete Campaign
+  **/
+  describe('campaign deletion test', () => {
+    it('it should delete campaign with configuration and rules', function *() {
+      yield request(strapi.config.url)
+        .delete(`/campaign/${campaign._id}`)
         .set('Authorization', `Bearer ${Token}`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')

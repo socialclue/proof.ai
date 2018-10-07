@@ -101,20 +101,20 @@ describe('Should Create Payment', function() {
 /*
  * Test the payment invoices
  */
-describe('Should Get Payment Invoices', function() {
-  it("should get user's payment invoices", function *() {
-    yield request(strapi.config.url)
-    .get('/payment/servicebot/invoice')
-    .set('Authorization', `Bearer ${Token}`)
-    .set('Accept', 'application/json')
-    .expect(200)
-    .expect('Content-Type', /json/)
-    .then((data, err) => {
-      if(data.error)
-        throw data.error;
-    });
-  });
-});
+// describe('Should Get Payment Invoices', function() {
+//   it("should get user's payment invoices", function *() {
+//     yield request(strapi.config.url)
+//     .get('/payment/servicebot/invoice')
+//     .set('Authorization', `Bearer ${Token}`)
+//     .set('Accept', 'application/json')
+//     .expect(200)
+//     .expect('Content-Type', /json/)
+//     .then((data, err) => {
+//       if(data.error)
+//         throw data.error;
+//     });
+//   });
+// });
 
 /*
  * Test the adding new card details to servicebot

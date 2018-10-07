@@ -40,7 +40,6 @@ module.exports = {
   },
 
   notification: async(ctx) => {
-
     let index = 'filebeat-*';
     let trackingId = ctx.params._id;
     let type = ctx.query.type;
@@ -50,14 +49,13 @@ module.exports = {
         message: 'invalid params if you want to send data using body use other params type'
       });
     }
-
     const host = ctx.request.header.origin?
       ctx.request.header.origin.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0]
     :
       ctx.request.header.referer?
         ctx.request.header.referer.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0].replace("/", "")
       :
-        null;
+        'localhost';
 
     let data = await strapi.services.elasticsearch.notification(index, trackingId, type, false, host);
 

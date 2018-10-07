@@ -10,9 +10,9 @@ const uuid = require('uuid/v4');
 
 var trackingId = [
   "INF-406jkjiji00uszj",
-  "INF-405gzoijjqu9mpg",
-  "INF-405gzoijjr5ckll",
-  "INF-405gzohjjzna2nb"
+  "INF-yj5h7rjmwtohi9",
+  // "INF-405gzoijjr5ckll",
+  // "INF-405gzohjjzna2nb"
 ];
 
 var randomTrackingId = trackingId[Math.floor(Math.random()*trackingId.length)];
@@ -23,7 +23,7 @@ var randomTrackingId = trackingId[Math.floor(Math.random()*trackingId.length)];
   describe('elastic search journey data retrival test', () => {
     it('should return journey data', function *() {
       const trackingId = randomTrackingId;
-      yield request('https://strapi.useinfluence.co')
+      yield request('http://localhost:1337')
       .get(`/elasticsearch/search/${trackingId}?type=journey`)
       .expect(200)
       .then((res) => {
@@ -46,7 +46,7 @@ var randomTrackingId = trackingId[Math.floor(Math.random()*trackingId.length)];
  **/
   describe('elastic search identification data retrival test', () => {
     it('should return identification data', function *() {
-      yield request('https://strapi.useinfluence.co')
+      yield request('http://localhost:1337')
       .get(`/elasticsearch/search/${randomTrackingId}?type=identification`)
       .expect(200)
       .then((res) => {
@@ -65,7 +65,7 @@ var randomTrackingId = trackingId[Math.floor(Math.random()*trackingId.length)];
  **/
   describe('elastic search live data retrival test', () => {
     it('should return live data', function *() {
-      yield request('https://strapi.useinfluence.co')
+      yield request('http://localhost:1337')
       .get(`/elasticsearch/search/${randomTrackingId}?type=live`)
       .expect(200)
       .then((res) => {

@@ -146,7 +146,6 @@ module.exports = {
       },
       user: result._id
     };
-    console.log(state, '===============state');
     //Create new state for new user
     strapi.api.state.services.state.add(state);
   },

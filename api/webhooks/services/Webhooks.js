@@ -80,6 +80,7 @@ module.exports = {
    */
 
   add: async (values) => {
+    console.log(values, '===============>values');
     const data = await Webhooks.create(values);
     return data;
   },
