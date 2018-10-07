@@ -54,17 +54,25 @@ const campaignLogger = function(value, done) {
   )
   .exec()
   .then(async campaign => {
-
     let captureLeads = await strapi.api.notificationpath.services.notificationpath.findRulesPath({_id: campaign.rule, type: 'lead' });
 
     captureLeads = captureLeads.map(lead => lead.url);
     if(captureLeads.indexOf(value.source.url.pathname) >= 0 ) {
       let form = value.form;
-      let email = form.email || form.EMAIL || form.Email || form.your-email;
+      let email = form.email || form.EMAIL || form.Email || form['your-email'];
+      if(!email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        Object.keys(form).map(function(key, index) {
+          if(re.test(String(form[key]).toLowerCase()))
+           email = form[key];
+        });
+      }
+
       let username = form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||
         form.username || form.USERNAME || form.UserName || form.Username ||
         form.FNAME || form.Fname || form.fname || form.FName || form['your-name'] ||
         form.lastName || form.lastname || form.LastName || form.LASTNAME || email.match(/^([^@]*)@/)[1] || "Someone";
+
       let geo = value.geo;
 
       let userDetail = {
