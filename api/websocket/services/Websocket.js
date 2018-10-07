@@ -17,20 +17,6 @@ const client = elasticsearch.Client({
 
 const webSocketStream = fs.createWriteStream('/var/lib/docker/containers/websocket.log');
 
-// const bunyan = require('bunyan');
-// const LoggingBunyan = require('@google-cloud/logging-bunyan').LoggingBunyan;
-//
-//
-// const loggingBunyan = new LoggingBunyan();
-//
-// const logger = bunyan.createLogger({
-//   name: 'websocket-logging',
-//   streams: [
-//     {stream: process.stdout, level: 'info'},
-//     loggingBunyan.stream('info')
-//   ],
-// });
-
 /**
 *gets enrichment data of a user
 **/
@@ -78,7 +64,7 @@ const campaignLogger = function(value, done) {
       let username = form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||
         form.username || form.USERNAME || form.UserName || form.Username ||
         form.FNAME || form.Fname || form.fname || form.FName || form['your-name'] ||
-        form.lastName || form.lastname || form.LastName || form.LASTNAME || email.match(/^([^@]*)@/)[1] || "Anonymous";
+        form.lastName || form.lastname || form.LastName || form.LASTNAME || email.match(/^([^@]*)@/)[1] || "Someone";
       let geo = value.geo;
 
       let userDetail = {
