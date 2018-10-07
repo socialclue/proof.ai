@@ -249,12 +249,23 @@ module.exports = {
    *
    * @return {Promise}
    */
-  add: async (values) => {
+  add: async (user, values) => {
 		let campaignValue = values.campaign;
 		let pagesValues = values.pages;
+		let updatedUser;
 		campaignValue.websiteUrl = campaignValue.websiteUrl.toLowerCase().replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0];
 		campaignValue.isActive = true;
 		campaignValue.health = 'bad';
+
+		if(user.path == '/getting-started') {
+			const params = {
+        id: user._id
+      };
+      const values = {
+        path: '/dashboard'
+      };
+			updatedUser = await strapi.plugins['users-permissions'].services.user.edit(params, values);
+		}
 
     var checkDomain = new Promise((resolve, reject) => {
       domainPing(campaignValue.websiteUrl)
@@ -525,7 +536,7 @@ module.exports = {
 				}
       });
 
-			return data; // return new campaign
+			return {data: data, updatedUser: updatedUser}; // return new campaign
     }
   },
 
