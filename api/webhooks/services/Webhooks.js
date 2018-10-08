@@ -80,7 +80,6 @@ module.exports = {
    */
 
   add: async (values) => {
-    console.log(values, '===============>values');
     const data = await Webhooks.create(values);
     return data;
   },
@@ -98,7 +97,7 @@ module.exports = {
       if(campaignInfo)
         values['host'] = campaignInfo.websiteUrl;
     }
-
+    console.log(values, '===========>');
     const data = {
       "path": "/visitors/events/",
       "value": {

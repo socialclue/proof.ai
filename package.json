@@ -19,6 +19,7 @@
     "lint": "node_modules/.bin/eslint api/**/*.js config/**/*.js plugins/**/*.js",
     "postinstall": "node node_modules/strapi/lib/utils/post-install.js",
     "frontend": "cd public/frontend && npm install  && npm run build",
+    "test-with-coverage": "nyc --reporter=text mocha --require co-mocha test/bootstrap.test.js test/api/*.test.js  --timeout 30000",
     "testapi": "mocha --require co-mocha test/bootstrap.test.js test/api/*.test.js  --timeout 30000",
     "testfunctional": "mocha --require co-mocha test/bootstrap.test.js test/functional/*.test.js  --timeout 30000",
     "artillery": "artillery run  ./artillery/test.yml"
@@ -32,7 +33,8 @@
     "eslint-plugin-babel": "^4.0.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-react": "^6.8.0",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "nyc": "^13.0.1"
   },
   "dependencies": {
     "@google-cloud/logging-bunyan": "^0.8.2",

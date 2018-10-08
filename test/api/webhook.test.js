@@ -121,6 +121,32 @@ var Token, profile, user, campaign, webhook;
     });
   });
 
+  /**
+   * Test Log data using Webhook
+   **/
+    describe('log data using webhook test', () => {
+      it('it should log data using webhook', function *() {
+        yield request(strapi.config.url)
+        .post(`/webhooks/custom/${campaign.trackingId}/2121`)
+        .send({
+            email: 'test@test.com',
+            name: 'Test',
+            latitude: '12.11',
+            longitude: '12.34',
+            city: 'New Delhi',
+            country: 'India',
+            ip: '23.23.2.3',
+            host: 'localhost'
+        })
+        .expect(201)
+        .expect('Content-Type', /json/)
+        .then((data, err) => {
+          if(data.error)
+            throw data.error;
+        });
+      });
+    });
+
 /**
  * Test Get One Webhook
  **/
