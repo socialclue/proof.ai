@@ -79,7 +79,10 @@ module.exports = {
    * @return {Promise}
    */
 
-  add: async (values) => {
+  add: async (user, values) => {
+    if(!user)
+      return { message: 'User not defined', error: true };
+    values['user'] = user._id;
     const data = await Webhooks.create(values);
     return data;
   },
@@ -91,52 +94,57 @@ module.exports = {
    */
 
   log: async (query, values) => {
-
+    let campaigns = [];
     if(values.type === 'zapier') {
       let campaignInfo = await addWebhook(query.trackingId);
-      if(campaignInfo)
+      if(campaignInfo) {
+        values['trackingId'] = campaignInfo.trackingId;
         values['host'] = campaignInfo.websiteUrl;
+      }
+      campaign.push(values);
     }
-    console.log(values, '===========>');
-    const data = {
-      "path": "/visitors/events/",
-      "value": {
-        "fingerprint": "a425aff7a248d252b013ac983a6320e6",
-        "sessionId": genGuid(),
-        "visitorId": genGuid(),
-        "trackingId": query.trackingId,
-        "userId": null,
-        "userProfile": null,
-        "form": {
-          "email": values.email,
-          "name": values.name || values.username || values.firstname || values.firstName || values.lastName
-        },
-        "geo": {
-          "latitude": values.latitude,
-          "longitude": values.longitude,
-          "city": values.city,
-          "country": values.country,
-          "ip": values.ip
-        },
-        "timestamp": Date.now(),
-        "event": "formsubmit",
-        "source": {
-          "url": {
-            "host": values.host,
-            "hostname": values.host,
-            "pathname": "/webhooks"
-          }
-        },
-        "target": {
-          "url": {
-            "host": values.host,
-            "hostname": values.host
+    await campaigns.map(async campaign => {
+      const data = {
+        "path": "/visitors/events/",
+        "value": {
+          "fingerprint": "a425aff7a248d252b013ac983a6320e6",
+          "sessionId": genGuid(),
+          "visitorId": genGuid(),
+          "trackingId": campaign.trackingId,
+          "userId": null,
+          "userProfile": null,
+          "form": {
+            "email": campaign.email,
+            "name": campaign.name || campaign.username || campaign.firstname || campaign.firstName || campaign.lastName
+          },
+          "geo": {
+            "latitude": campaign.latitude,
+            "longitude": campaign.longitude,
+            "city": campaign.city,
+            "country": campaign.country,
+            "ip": campaign.ip
+          },
+          "timestamp": Date.now(),
+          "event": "formsubmit",
+          "source": {
+            "url": {
+              "host": campaign.host,
+              "hostname": campaign.host,
+              "pathname": "/webhooks"
+            }
+          },
+          "target": {
+            "url": {
+              "host": campaign.host,
+              "hostname": campaign.host
+            }
           }
         }
-      }
-    };
+      };
 
-    await strapi.api.websocket.services.websocket.log(JSON.stringify(data));
+      await strapi.api.websocket.services.websocket.log(JSON.stringify(data));
+    });
+
     return { message: 'logs added', error: false };
   },
 

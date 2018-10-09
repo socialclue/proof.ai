@@ -31,6 +31,10 @@
     "secretId": {
       "type": "string",
       "multiple": false
+    },
+    "user": {
+      "model": "user",
+      "plugin": "users-permissions"
     }
   }
 }

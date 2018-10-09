@@ -46,7 +46,7 @@ module.exports = {
    */
 
   create: async (ctx) => {
-    const data = await strapi.services.webhooks.add(ctx.request.body);
+    const data = await strapi.services.webhooks.add(ctx.state.user, ctx.request.body);
 
     // Send 201 `created`
     ctx.created(data);
