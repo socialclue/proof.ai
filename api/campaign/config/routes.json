@@ -63,6 +63,14 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "POST",
+      "path": "/campaign/analytics/download",
+      "handler": "Campaign.downloadAnalytics",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

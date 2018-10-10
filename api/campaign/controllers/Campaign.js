@@ -135,4 +135,20 @@ module.exports = {
     // Send 200 `ok`
     ctx.send(data);
   },
+
+
+    /**
+     * Download user's analytics info.
+     *
+     * @return {Object|Array}
+     */
+
+    downloadAnalytics: async (ctx) => {
+      const users = ctx.request.body.users;
+      console.log(users, '===========>');
+      const data = await strapi.services.campaign.downloadAnalytics(users);
+
+      // Send 200 `ok`
+      ctx.send(data);
+    },
 };

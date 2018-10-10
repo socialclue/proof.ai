@@ -9,6 +9,13 @@
 // Public dependencies.
 const _ = require('lodash');
 const domainPing = require("domain-ping");
+var pdf = require('html-pdf');
+
+var options = {
+  format: 'A4',
+  "orientation": "portrait",
+};
+var analyticsTemplate = require('../config/analyticsTemplate');
 
 let ruleDefault = {
 	"hideNotification" : true,
@@ -99,6 +106,21 @@ let getSignUps = async function(index, trackingId, type, host, callback) {
   } catch(err) {
     callback(err);
   }
+}
+
+/**
+ * Promise to generate invoice.
+ *
+ * @return {Promise}
+ */
+function generatePdf(html, id) {
+  return new Promise(function (resolve, reject) {
+    pdf.create(html, options).toFile(`./public/analytics/${id}.pdf`, function(err, res) {
+      if (err)
+        return reject(err);
+      return resolve({path: `analytics/${id}.pdf`, filename: res});
+    });
+  })
 }
 
 module.exports = {
@@ -652,4 +674,42 @@ module.exports = {
 
     return {websiteLive: campaignWebsites, notificationCount: countConfig, uniqueUsers: uniqueUsers };
   },
+
+	/**
+   * Promise to fetch user's campaigns info.
+   *
+   * @return {Promise}
+   */
+
+  downloadAnalytics: async (users) => {
+		const renderRows = await users.map((user, index) => {
+      return `
+				<tr class="details">
+	        <td>
+	          ${index}
+	        </td>
+	        <td>
+	          ${user.name}
+	        </td>
+	        <td>
+	          ${user.email}
+	        </td>
+	        <td>
+	          ${user.location}
+	        </td>
+	        <td>
+	          ${user.country}
+	        </td>
+	        <td>
+	          ${user.signup}
+	        </td>
+				</tr>
+      `;
+    });
+		let html = await analyticsTemplate(renderRows);
+    let response = await generatePdf(html, 'id');
+
+    return response;
+  },
+
 };

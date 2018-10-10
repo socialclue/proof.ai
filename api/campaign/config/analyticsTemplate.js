@@ -1,30 +1,7 @@
 var moment = require('moment');
 
-const analyticsTemplate = (invoice, user) => {
-  const renderRows = () => {
-    users.map((user, index) => {
-      return `
-        <td>
-          ${index}
-        </td>
-        <td>
-          ${user.name}
-        </td>
-        <td>
-          ${user.email}
-        </td>
-        <td>
-          ${user.location}
-        </td>
-        <td>
-          ${user.country}
-        </td>
-        <td>
-          ${user.signup}
-        </td>
-      `;
-    });
-  };
+const analyticsTemplate = (usersHtml) => {
+
   var html = `
     <!doctype html>
     <html>
@@ -161,9 +138,7 @@ const analyticsTemplate = (invoice, user) => {
               </td>
             </tr>
 
-            <tr class="details">
-              ${renderRows()}
-            </tr>
+            ${usersHtml}
 
           </table>
         </div>
