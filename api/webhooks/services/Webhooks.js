@@ -102,6 +102,12 @@ module.exports = {
         values['host'] = campaignInfo.websiteUrl;
       }
       campaign.push(values);
+    } else {
+      const webhook = await Webhooks.findOne({secretId: query.secretId});
+      const campaignsInfo = await Campaign.find({webhooks: webhook._id});
+      await campaignsInfo.map((campaign, index) => {
+        campaigns.push(Object.assign({trackingId: campaign.trackingId, host: campaign.websiteUrl}, values));
+      });
     }
     await campaigns.map(async campaign => {
       const data = {
