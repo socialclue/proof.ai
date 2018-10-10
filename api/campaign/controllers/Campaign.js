@@ -145,7 +145,6 @@ module.exports = {
 
     downloadAnalytics: async (ctx) => {
       const users = ctx.request.body.users;
-      console.log(users, '===========>');
       const data = await strapi.services.campaign.downloadAnalytics(users);
 
       // Send 200 `ok`

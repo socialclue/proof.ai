@@ -8,12 +8,12 @@
 
 // Public dependencies.
 const _ = require('lodash');
+const moment = require('moment');
 const domainPing = require("domain-ping");
 var pdf = require('html-pdf');
 
 var options = {
-  format: 'A4',
-  "orientation": "portrait",
+  "orientation": "landscape"
 };
 var analyticsTemplate = require('../config/analyticsTemplate');
 
@@ -689,25 +689,25 @@ module.exports = {
 	          ${index}
 	        </td>
 	        <td>
-	          ${user.name}
+	          ${user.username?user.username:''}
 	        </td>
 	        <td>
 	          ${user.email}
 	        </td>
 	        <td>
-	          ${user.location}
+	          ${user.city?user.city:''}
 	        </td>
 	        <td>
-	          ${user.country}
+	          ${user.country?user.country:''}
 	        </td>
 	        <td>
-	          ${user.signup}
+	          ${moment(user.timestamp).format('MM/DD/YYYY')}
 	        </td>
 				</tr>
       `;
     });
 		let html = await analyticsTemplate(renderRows);
-    let response = await generatePdf(html, 'id');
+    let response = await generatePdf(html, 'analytics');
 
     return response;
   },
