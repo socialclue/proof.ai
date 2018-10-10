@@ -2,7 +2,7 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/webhooks/campaign/:campaignId",
+      "path": "/webhooks/campaign",
       "handler": "Webhooks.find",
       "config": {
         "policies": []

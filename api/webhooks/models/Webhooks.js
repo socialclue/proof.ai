@@ -34,7 +34,7 @@ module.exports = {
   // Fired before `insert` query.
   beforeCreate: async (model) => {
     model.secretId = uuidv1();
-    model.endpoint = `https://strapi.useinfluence.co/webhooks/custom/${model.trackingId}/${model.user}`;
+    model.endpoint = `https://strapi.useinfluence.co/webhooks/custom/${model.user}/${model.secretId}`;
   }
 
   // After creating a value.

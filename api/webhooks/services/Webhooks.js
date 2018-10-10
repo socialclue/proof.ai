@@ -58,7 +58,7 @@ module.exports = {
    */
 
   fetchAll: (params) => {
-    return Webhooks.find({campaign: params});
+    return Webhooks.find({user: params});
   },
 
   /**
