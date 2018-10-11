@@ -45,7 +45,10 @@ const addWebhook = async function(trackingId, thirdParty) {
       "thirdParty" : thirdParty?thirdParty:''
     }
 
-   await Notificationpath.create(lead);
+    if(!campaignInfo.zapier || (campaignInfo.zapier && !campaignInfo.zapier.isActive))
+      Campaign.update({trackingId: trackingId?trackingId:null}, {$set: {zapier: {isActive: true} } }, {new: true});
+
+    await Notificationpath.create(lead);
   }
   return campaignInfo;
 };
