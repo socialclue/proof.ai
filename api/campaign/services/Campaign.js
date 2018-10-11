@@ -686,7 +686,7 @@ module.exports = {
       return `
 				<tr class="details">
 	        <td>
-	          ${index}
+	          ${index+1}
 	        </td>
 	        <td>
 	          ${user.username?user.username:''}
