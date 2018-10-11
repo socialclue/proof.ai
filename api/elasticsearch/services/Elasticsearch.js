@@ -35,7 +35,23 @@ module.exports = {
 
   query: async (index,q) => {
     return new Promise((resolve, reject)=> {
-      client.search({index: index, q: q}, function (err,resp,status) {
+      client.search(
+        {
+          "index": index,
+          "body": {
+            "sort" : [
+                { "@timestamp" : {"order" : "desc" } }
+            ],
+            "query" : {
+              "bool": {
+                "must": [
+                  { "match": { "json.value.trackingId" : q } }
+                ]
+              }
+            }
+          }
+        }
+        , function (err,resp,status) {
         if (err) reject(err);
         else resolve(resp);
         strapi.log.info('---Client Search Returned--- ',resp);
