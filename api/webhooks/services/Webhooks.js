@@ -19,7 +19,7 @@ const genGuid = function() {
         s4() + '-' + s4() + s4() + s4();
 };
 
-const addWebhook = async function(trackingId) {
+const addWebhook = async function(trackingId, thirdParty) {
 
   const campaignInfo = await Campaign.findOne({ trackingId: trackingId?trackingId:null });
   let campaignLead;
@@ -31,9 +31,9 @@ const addWebhook = async function(trackingId) {
       url: '/webhooks'
     });
 
-  const rule = await Rules.findOne({ campaign: campaignInfo?campaignInfo._id:null });
-
   if(!campaignLead && campaignInfo) {
+    const rule = await Rules.findOne({ campaign: campaignInfo?campaignInfo._id:null });
+
     const lead = {
       "url" : "/webhooks",
     	"status" : "verified",
@@ -41,7 +41,8 @@ const addWebhook = async function(trackingId) {
     	"type" : "lead",
     	"rule" : rule?rule._id:'',
     	"domain" : campaignInfo.websiteUrl,
-    	"campaignName" : campaignInfo.campaignName
+    	"campaignName" : campaignInfo.campaignName,
+      "thirdParty" : thirdParty?thirdParty:''
     }
 
    await Notificationpath.create(lead);
@@ -96,7 +97,7 @@ module.exports = {
   log: async (query, values) => {
     let campaigns = [];
     if(values.type === 'zapier') {
-      let campaignInfo = await addWebhook(query.trackingId);
+      let campaignInfo = await addWebhook(query.trackingId, 'zapier');
       if(campaignInfo) {
         values['trackingId'] = campaignInfo.trackingId;
         values['host'] = campaignInfo.websiteUrl;
@@ -105,7 +106,8 @@ module.exports = {
     } else {
       const webhook = await Webhooks.findOne({secretId: query.secretId});
       const campaignsInfo = await Campaign.find({webhooks: webhook._id});
-      await campaignsInfo.map((campaign, index) => {
+      await campaignsInfo.map(async(campaign, index) => {
+        await addWebhook(campaign.trackingId);
         campaigns.push(Object.assign({trackingId: campaign.trackingId, host: campaign.websiteUrl}, values));
       });
     }

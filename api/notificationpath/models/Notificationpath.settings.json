@@ -33,6 +33,10 @@
       "type": "string",
       "multiple": false
     },
+    "thirdParty": {
+      "type": "string",
+      "multiple": false
+    },
     "campaignName": {
       "type": "string",
       "multiple": false
