@@ -228,11 +228,11 @@ module.exports = {
         }
       });
     } else {
-      return { message: "user not found", err: true };
+      return { message: "user not found", error: true };
     }
 
     if(payment_subscription.error) {
-      return { err: true, message: payment_subscription.message.error };
+      return { error: true, message: payment_subscription.message.error };
     }
 
     //created payments object for storing
