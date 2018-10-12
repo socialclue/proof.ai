@@ -178,7 +178,15 @@ module.exports = {
             query: {
               "bool": {
                 "must": [
-                  { "match": { "json.value.source.url.hostname": host }},
+                  {
+                    "bool": {
+                      "should": [
+                        { "match": { "json.value.source.url.hostname": host }},
+                        { "match": { "json.value.source.url.hostname": `www.${host}` }},
+                      ],
+                    }
+                  },
+                  // { "match": { "json.value.source.url.hostname": host }},
                   { "match": { "json.value.trackingId":  trackingId }},
                   { "range": { "@timestamp": { "gte": moment().subtract(20, 'minutes').format(), "lt": moment().format() }}}
                 ]
@@ -210,7 +218,15 @@ module.exports = {
       case 'identification' :
         let identificationQuery = !limit ?
           [
-            { "match": { "host.keyword": host }},
+            {
+              "bool": {
+                "should": [
+                  { "match": { "host.keyword": host }},
+                  { "match": { "host.keyword": `www.${host}` }},
+                ],
+              }
+            },
+            // { "match": { "host.keyword": host }},
             { "match": { "trackingId.keyword":  trackingId }},
             { "range":
               { "timestamp":
@@ -249,7 +265,15 @@ module.exports = {
       case 'journey' :
         let mustQuery = !limit ?
           [
-            { "match": { "host.keyword": host }},
+            {
+              "bool": {
+                "should": [
+                  { "match": { "host.keyword": host }},
+                  { "match": { "host.keyword": `www.${host}` }},
+                ],
+              }
+            },
+            // { "match": { "host.keyword": host }},
             { "match": { "trackingId.keyword":  trackingId }},
             { "range":
               { "timestamp":

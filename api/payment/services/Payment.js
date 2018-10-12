@@ -259,7 +259,8 @@ module.exports = {
       coupon_details: coupon,
       plan_details: payment_subscription.payment_plan,
       subscribed_at: payment_subscription.subscribed_at,
-      servicebot_user_id: payment_subscription.user_id
+      servicebot_user_id: payment_subscription.user_id,
+      service_instance_id: payment_subscription.id
     };
 
     await Plan.create(plan_value);
@@ -271,7 +272,12 @@ module.exports = {
     };
 
     const userValues = {
-      path: '/dashboard'
+      path: '/dashboard',
+      servicebot:{
+        client_id: payment_subscription.user_id,
+        status: user.servicebot.status,
+        service_instance_id: payment_subscription.id
+      }
     };
 
     const userUpdate = strapi.plugins['users-permissions'].services.user.edit(userParams, userValues);

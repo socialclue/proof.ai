@@ -88,13 +88,12 @@ module.exports = {
         Authorization: 'JWT ' + JSON.parse(token).token,
         'Content-Type': 'application/json'
       }});
-
       //parse and save servicebot's new user's details to db
       userDetails = userDetails?JSON.parse(userDetails):[];
       if(userDetails.length)
         model.servicebot = {
           client_id: userDetails[0].id,
-          status: userDetails[0].status,
+          status: userDetails[0].status
         }
     } catch(error) {
       const err = {
