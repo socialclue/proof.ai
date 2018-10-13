@@ -31,7 +31,7 @@ function doRequest(options) {
       if(res.statusCode >= 400) {
         return resolve({error: true, message: body});
       }
-      // console.log(error, res, body);
+
       const response = typeof body === 'string'? JSON.parse(body) : body;
       if (!error && res.statusCode == 200 || !response.error) {
         resolve(body);
@@ -118,7 +118,6 @@ module.exports = {
         password: user.password
       }
     }); //retrieve auth token for logged in user from service bot
-
     var invoices = await doRequest({
       method: 'GET',
       url:'https://servicebot.useinfluence.co/api/v1/invoices/own',
@@ -127,7 +126,6 @@ module.exports = {
         'Content-Type': 'application/json'
       }
     }); //retrieve user invoices from service bot
-
     return JSON.parse(invoices); //returns parsed user's invoices
   },
 
