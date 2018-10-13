@@ -347,7 +347,7 @@ module.exports = {
             'Content-Type': 'application/json'
           }
         });
-
+        console.log(payment_add_charge, '==================>');
         if(!payment_add_charge)
           return { error: true, message: { message: "Card declined" }};
         else {
