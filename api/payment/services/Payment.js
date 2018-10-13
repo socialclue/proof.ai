@@ -31,6 +31,7 @@ function doRequest(options) {
       if(res.statusCode >= 400) {
         return resolve({error: true, message: body});
       }
+      // console.log(error, res, body);
       const response = typeof body === 'string'? JSON.parse(body) : body;
       if (!error && res.statusCode == 200 || !response.error) {
         resolve(body);
@@ -267,6 +268,29 @@ module.exports = {
 
     //Create new payment document
     const data = await Payment.create(payment_values);
+
+    let profileData = await Profile.findOne({user: user._id});
+    const profile = await Profile.findOneAndUpdate(
+      {user: user._id},
+      {$set:
+        {
+          plan: plan,
+          uniqueVisitorQouta: profileData.uniqueVisitorQouta + Number(plan.description),
+          uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(plan.description)
+        }
+      },
+      {new: true}
+    );
+    await strapi.plugins.email.services.email.planUpgrade(
+      user.email,
+      user.username,
+      {
+        name: plan.name,
+        uniqueVisitorQouta: profileData.uniqueVisitorQouta,
+        uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(plan.description)
+      }
+    );
+
     const userParams = {
       id: user._id
     };
@@ -282,6 +306,81 @@ module.exports = {
 
     const userUpdate = strapi.plugins['users-permissions'].services.user.edit(userParams, userValues);
     return data;
+  },
+
+  /**
+   * Promise to update user plan and make payment.
+   *
+   * @return {Promise}
+   */
+  updatePlan: async (user, values) => {
+    let plan = values;
+    let payment_subscription, payment_instance, payment_add_charge;
+    // retrieve logged in user's auth token from servicebot
+    let auth_token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: user.email, password: user.password }});
+
+    if(auth_token) {
+        payment_instance = {
+          "statement_descriptor": "Useinfluence",
+          "name": plan.name,
+          "amount": plan.amount,
+          "currency": "usd",
+          "interval": plan.interval,
+          "interval_count": plan.interval_count,
+          "trial_period_days": 0,
+          "references":{}
+        };
+
+        payment_subscription = await doRequest({
+          method: 'POST',
+          url:`https://servicebot.useinfluence.co/api/v1/service-instances/${user.servicebot.service_instance_id}/change-price`,
+          json: payment_instance,
+          headers: {
+            Authorization: 'JWT ' + JSON.parse(auth_token).token,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        payment_add_charge = await doRequest({
+          method: 'POST',
+          url:`https://servicebot.useinfluence.co/api/v1/service-instances/${user.servicebot.service_instance_id}/approve`,
+          headers: {
+            Authorization: 'JWT ' + JSON.parse(auth_token).token,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if(!payment_add_charge)
+          return { error: true, message: { message: "Card declined" }};
+        else {
+          let profileData = await Profile.findOne({user: user._id});
+          const profile = await Profile.findOneAndUpdate(
+            {user: user._id},
+            {$set:
+              {
+                plan: plan,
+                uniqueVisitorQouta: profileData.uniqueVisitorQouta + Number(plan.description),
+                uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(plan.description)
+              }
+            },
+            {new: true}
+          );
+          await strapi.plugins.email.services.email.planUpgrade(
+            user.email,
+            user.username,
+            {
+              name: plan.name,
+              uniqueVisitorQouta: profileData.uniqueVisitorQouta,
+              uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(plan.description)
+            }
+          );
+
+          return { error: false, message: { message: "Plan Upgraded" , profile: profile} };
+        }
+
+    } else {
+      return { message: "user not found", error: true };
+    }
   },
 
   /**

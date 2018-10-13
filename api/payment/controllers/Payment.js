@@ -103,6 +103,19 @@ module.exports = {
   },
 
   /**
+   * Update plan payment.
+   *
+   * @return {Object}
+   */
+
+  updatePlan: async (ctx) => {
+    const data = await strapi.services.payment.updatePlan(ctx.state.user, ctx.request.body);
+
+    // Send 200 `ok`
+    ctx.send(data);
+  },
+
+  /**
    * Update a/an payment record.
    *
    * @return {Object}
