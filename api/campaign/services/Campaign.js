@@ -331,7 +331,7 @@ module.exports = {
           newConfiguration['notificationType'] = notification._id;
 					if(notification.notificationName == 'Bulk Activity') {
 						newConfiguration['panelStyle'] = {
-					    "radius" : 3,
+					    "radius" : 9,
 					    "borderWidth" : 0,
 					    "borderColor" : {
 					      "r" : 200,
