@@ -105,7 +105,7 @@ module.exports = {
         values['trackingId'] = campaignInfo.trackingId;
         values['host'] = campaignInfo.websiteUrl;
       }
-      campaign.push(values);
+      campaigns.push(values);
     } else {
       const webhook = await Webhooks.findOne({secretId: query.secretId});
       const campaignsInfo = await Campaign.find({webhooks: webhook._id});
