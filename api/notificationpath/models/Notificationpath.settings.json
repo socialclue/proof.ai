@@ -34,7 +34,7 @@
       "multiple": false
     },
     "thirdParty": {
-      "type": "string",
+      "type": "json",
       "multiple": false
     },
     "campaignName": {

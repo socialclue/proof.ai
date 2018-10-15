@@ -43,7 +43,7 @@ const addWebhook = async function(trackingId, thirdParty) {
     	"domain" : campaignInfo.websiteUrl,
     	"campaignName" : campaignInfo.campaignName,
       "thirdParty" : thirdParty?thirdParty:''
-    }
+    };
 
     if(!campaignInfo.zapier || (campaignInfo.zapier && !campaignInfo.zapier.isActive))
       Campaign.update({trackingId: trackingId?trackingId:null}, {$set: {zapier: {isActive: true} } }, {new: true});
@@ -100,7 +100,7 @@ module.exports = {
   log: async (query, values) => {
     let campaigns = [];
     if(values.type === 'zapier') {
-      let campaignInfo = await addWebhook(query.trackingId, 'zapier');
+      let campaignInfo = await addWebhook(query.trackingId, { type: 'zapier', application: values.thirdParty });
       if(campaignInfo) {
         values['trackingId'] = campaignInfo.trackingId;
         values['host'] = campaignInfo.websiteUrl;
