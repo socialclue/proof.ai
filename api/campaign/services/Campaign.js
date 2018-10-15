@@ -329,6 +329,7 @@ module.exports = {
           let newConfiguration = Object.assign({}, configurationDefault);
           newConfiguration['campaign'] = data._id;
           newConfiguration['notificationType'] = notification._id;
+					newConfiguration['notificationUrl'] = `https://useinfluence.co/signup?affiliate=${user.affiliateId}`;
 					if(notification.notificationName == 'Bulk Activity') {
 						newConfiguration['panelStyle'] = {
 					    "radius" : 9,
@@ -472,7 +473,6 @@ module.exports = {
 							"liveVisitorCount": 1,
 							"liveVisitorText":'are viewing this site'
 					  };
-
 						newConfiguration['liveVisitorText'] = 'are viewing this site';
 						newConfiguration['contentText'] = 'Influence';
 					}
