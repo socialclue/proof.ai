@@ -44,7 +44,7 @@ module.exports = {
       JSON.stringify(
         await strapi.api.state.services.state.fetch({
           profile: result.profile
-        });
+        })
       )
     );
 
