@@ -188,7 +188,7 @@ module.exports = {
                   },
                   // { "match": { "json.value.source.url.hostname": host }},
                   { "match": { "json.value.trackingId":  trackingId }},
-                  { "range": { "@timestamp": { "gte": moment().subtract(20, 'minutes').format(), "lt": moment().format() }}}
+                  { "range": { "@timestamp": { "gte": moment().subtract(60, 'minutes').format(), "lt": moment().format() }}}
                 ]
               }
             },
