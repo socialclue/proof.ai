@@ -186,7 +186,7 @@ module.exports = {
     //Create new state for new user
     strapi.api.state.services.state.add(state);
     let oldDate = new Date();
-    await strapi.config.functions.kue.createJob(result.email, 'Campaign creation check', 'Checks whether the users has created campaign after two days or not and hits th mail.', result, 'medium', 1, new Date(oldDate.getTime() + .5*60000),function(err) {
+    await strapi.config.functions.kue.createJob(result.email, 'Campaign creation check', 'Checks whether the users has created campaign after two days or not and hits th mail.', result, 'medium', 1, new Date(oldDate.getTime() + 3*24*60*60000),function(err) {
       if(err)
         console.log(err);
       else
