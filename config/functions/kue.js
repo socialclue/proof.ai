@@ -60,12 +60,12 @@ module.exports = {
    * @param attempts
    * @returns {Promise<void>}
    */
-  createJob: async (jobName, jobTitle, jobDescription, jobValue, priority, attempts, done) => {
+  createJob: async (jobName, jobTitle, jobDescription, jobValue, priority, attempts, milliseconds, done) => {
     q.create(jobName,{
         title: jobTitle,
         description: jobDescription,
         value: jobValue
-    }).priority(priority).attempts(attempts).save(function( err ) {
+    }).delay(milliseconds).priority(priority).attempts(attempts).save(function( err ) {
       if (!err) done(err);
       else done();
     });

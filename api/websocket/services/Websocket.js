@@ -133,7 +133,7 @@ module.exports =  {
 
     let testJSON = JSON.parse(msg);
     if(testJSON.value && testJSON.value.event == 'formsubmit') {
-      await strapi.config.functions.kue.createJob(testJSON.value.fingerprint, 'Campaign Logger', 'Logs new form data into Signups index', testJSON.value, 'high', 3, function(err) {
+      await strapi.config.functions.kue.createJob(testJSON.value.fingerprint, 'Campaign Logger', 'Logs new form data into Signups index', testJSON.value, 'high', 3, 0, function(err) {
         if(err)
           console.log(err);
         else

@@ -9,6 +9,8 @@
  const bcrypt = require('bcryptjs');
  const schedule = require('node-schedule');
  const moment = require('moment');
+
+
  /**
  * Function for http requests
  *
@@ -31,6 +33,40 @@ function doRequest(options) {
   });
 }
 
+/**
+* Function for campaign check
+*
+*@param{{user, callback}}
+*@return {Promise}
+*/
+const campaignChecker = async (user, done) => {
+  if(user && user._id) {
+    const profile = await Profile.findOne({user: user?user._id:null});
+    if(profile && profile._id) {
+      const campaigns = await Campaign.find({profile: profile?profile._id:null});
+      if(campaigns && campaigns.length) {
+        let checkActive = 0;
+        campaigns.map(async campaign => {
+          await strapi.services.elasticsearch.query('filebeat-*', campaign.trackingId).then(res=>{
+            if(res.hits && res.hits.hits && res.hits.hits.length)
+              checkActive++;
+          });
+        });
+        if(!checkActive) {
+          done('No Campaign Found');
+        } else {
+          done(null);
+        }
+      } else {
+        done('Campaign Not Found');
+      }
+    } else {
+      done('Profile Not Found');
+    }
+  } else {
+    done('User Not Found');
+  }
+}
 
 module.exports = {
   // Before saving a value.
@@ -147,6 +183,13 @@ module.exports = {
     };
     //Create new state for new user
     strapi.api.state.services.state.add(state);
+    let oldDate = new Date();
+    await strapi.config.functions.kue.createJob(result.email, 'Campaign creation check', 'Checks whether the users has created campaign after two days or not and hits th mail.', result, 'high', 3, new Date(oldDate.getTime() + .5*60000),function(err) {
+      if(err)
+        console.log(err);
+      else
+        strapi.config.functions.kue.processJobs(result.email, 1, campaignChecker);
+    });
   },
 
   // Before updating a value.
