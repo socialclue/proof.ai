@@ -871,4 +871,52 @@ module.exports = {
         };
         return send(mailOptions);
     },
+
+    /**
+     * Automatic Upgrade.
+     * @param email
+     * @param name
+     * @returns {Promise<*>}
+     */
+    automaticUpgrade: async (email, name) =>  {
+        const mailSub = "Your Account Has Been Upgraded";
+        const content =`
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                  <div>Hey ${name},</div>
+                  <div>&nbsp;</div>
+                  <div>This is a follow up to the last email. Your account has been upgraded to the next plan as we noticed your website was getting more traffic for this month than usual.</div>
+                  <div>&nbsp;</div>
+                  <div>We’ll keep you posted if in any case you reach your limit for this account as well.</div>
+                  <div>&nbsp;</div>
+                  <div>In case you need any other help, please feel free to reply to this email and we'll get back to you.</div>
+              </td>
+            </tr>
+          </table>
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                <div>Thanks!</div>
+              </td>
+            </tr>
+          </table>
+        `;
+
+        var mytemp = template.commontemp(mailSub, name, content);
+
+        let mailOptions = {
+          from: 'noreply@useinfluence.co',
+          to: email,
+          subject: mailSub,
+          html: mytemp
+        };
+        return send(mailOptions);
+    },
 };
