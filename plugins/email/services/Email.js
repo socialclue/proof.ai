@@ -733,33 +733,82 @@ module.exports = {
     paymentFailed: async (email, name) =>  {
         const mailSub = "Need Help?"
         const content =`
-        <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
-          <tr>
-            <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
-                height="100%"
-                valign="top"
-                bgcolor="">
-                <div>Hey ${name},</div>
-                <div>&nbsp;</div>
-                <div>We just noticed that there is a slight error for the payment of your account with us. That's why we are reaching out to check with you on it.</div>
-                <div>&nbsp;</div>
-                <div>We believe that it is payment failure issue for your account. Can you please recheck it with the same card or try with a new one?</div>
-                <div>&nbsp;</div>
-                <div>If you are still facing any issues please reply to this email and we'll be happy to resolve your issues.</div>
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                  <div>Hey ${name},</div>
+                  <div>&nbsp;</div>
+                  <div>We just noticed that there is a slight error for the payment of your account with us. That's why we are reaching out to check with you on it.</div>
+                  <div>&nbsp;</div>
+                  <div>We believe that it is payment failure issue for your account. Can you please recheck it with the same card or try with a new one?</div>
+                  <div>&nbsp;</div>
+                  <div>If you are still facing any issues please reply to this email and we'll be happy to resolve your issues.</div>
 
-            </td>
-          </tr>
-        </table>
-        <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
-          <tr>
-            <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
-                height="100%"
-                valign="top"
-                bgcolor="">
-              <div>Thanks!</div>
-            </td>
-          </tr>
-        </table>
+              </td>
+            </tr>
+          </table>
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                <div>Thanks!</div>
+              </td>
+            </tr>
+          </table>
+        `;
+
+        var mytemp = template.commontemp(mailSub, name, content);
+
+        let mailOptions = {
+          from: 'noreply@useinfluence.co',
+          to: email,
+          subject: mailSub,
+          html: mytemp
+        };
+        return send(mailOptions);
+    },
+
+    /**
+     * Deleting Account.
+     * @param email
+     * @param name
+     * @returns {Promise<*>}
+     */
+    deletingAccount: async (email, name) =>  {
+        const mailSub = "Need Help?"
+        const content =`
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                  <div>Hey ${user.name},</div>
+                  <div>&nbsp;</div>
+                  <div>We just noticed that your account hasn't been cleared with any payments for this month. Just wanted to check if you'd be using our tool or not.</div>
+                  <div>&nbsp;</div>
+                  <div>If not, then the system will be removing your data in the coming days, to keep your data safe.So if you want to access your data instantly, then we'd request you to refresh your payments and you'll get instant access to your account.</div>
+                  <div>&nbsp;</div>
+                  <div>If in any case you need any other help, please feel free to reply to this email and we will get back to you shortly.</div>
+
+              </td>
+            </tr>
+          </table>
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                <div>Thanks!</div>
+              </td>
+            </tr>
+          </table>
         `;
 
         var mytemp = template.commontemp(mailSub, name, content);
