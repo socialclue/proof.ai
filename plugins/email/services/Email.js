@@ -731,7 +731,7 @@ module.exports = {
      * @returns {Promise<*>}
      */
     paymentFailed: async (email, name) =>  {
-        const mailSub = "Need Help?"
+        const mailSub = "Payment Failed"
         const content =`
           <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
             <tr>
@@ -780,7 +780,7 @@ module.exports = {
      * @returns {Promise<*>}
      */
     deletingAccount: async (email, name) =>  {
-        const mailSub = "Need Help?"
+        const mailSub = "Deleting Your Data";
         const content =`
           <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
             <tr>
@@ -788,7 +788,7 @@ module.exports = {
                   height="100%"
                   valign="top"
                   bgcolor="">
-                  <div>Hey ${user.name},</div>
+                  <div>Hey ${name},</div>
                   <div>&nbsp;</div>
                   <div>We just noticed that your account hasn't been cleared with any payments for this month. Just wanted to check if you'd be using our tool or not.</div>
                   <div>&nbsp;</div>
@@ -805,6 +805,56 @@ module.exports = {
                   height="100%"
                   valign="top"
                   bgcolor="">
+                <div>Thanks!</div>
+              </td>
+            </tr>
+          </table>
+        `;
+
+        var mytemp = template.commontemp(mailSub, name, content);
+
+        let mailOptions = {
+          from: 'noreply@useinfluence.co',
+          to: email,
+          subject: mailSub,
+          html: mytemp
+        };
+        return send(mailOptions);
+    },
+
+    /**
+     * Closing Account Limit .
+     * @param email
+     * @param name
+     * @returns {Promise<*>}
+     */
+    closingAccountLimit: async (email, name) =>  {
+        const mailSub = "10% Account Limit Remaining";
+        const content =`
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                  <div>Hey ${name},</div>
+                  <div>&nbsp;</div>
+                  <div>We just saw that you have been getting more traffic on your website, and you are only 10% away from hitting your account limit.</div>
+                  <div>&nbsp;</div>
+                  <div>Just giving you a heads up.</div>
+                  <div>&nbsp;</div>
+                  <div>We’ll upgrade your account once it hits 105% of the account limit.</div>
+                  <div>In case you need any other help, please feel free to reply to this email and we will get back to you.</div>
+              </td>
+            </tr>
+          </table>
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                <div>See you soon.</div>
                 <div>Thanks!</div>
               </td>
             </tr>
