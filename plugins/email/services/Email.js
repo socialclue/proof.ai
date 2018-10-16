@@ -723,4 +723,53 @@ module.exports = {
         };
         return send(mailOptions);
     },
+
+    /**
+     * Payment failed Email.
+     * @param email
+     * @param name
+     * @returns {Promise<*>}
+     */
+    paymentFailed: async (email, name) =>  {
+        const mailSub = "Need Help?"
+        const content =`
+        <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+          <tr>
+            <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                height="100%"
+                valign="top"
+                bgcolor="">
+                <div>Hey ${name},</div>
+                <div>&nbsp;</div>
+                <div>We just noticed that there is a slight error for the payment of your account with us. That's why we are reaching out to check with you on it.</div>
+                <div>&nbsp;</div>
+                <div>We believe that it is payment failure issue for your account. Can you please recheck it with the same card or try with a new one?</div>
+                <div>&nbsp;</div>
+                <div>If you are still facing any issues please reply to this email and we'll be happy to resolve your issues.</div>
+
+            </td>
+          </tr>
+        </table>
+        <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+          <tr>
+            <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                height="100%"
+                valign="top"
+                bgcolor="">
+              <div>Thanks!</div>
+            </td>
+          </tr>
+        </table>
+        `;
+
+        var mytemp = template.commontemp(mailSub, name, content);
+
+        let mailOptions = {
+          from: 'noreply@useinfluence.co',
+          to: email,
+          subject: mailSub,
+          html: mytemp
+        };
+        return send(mailOptions);
+    },
 };
