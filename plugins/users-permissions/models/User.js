@@ -53,11 +53,13 @@ const campaignChecker = async (user, done) => {
           });
         });
         if(!checkActive) {
+          await strapi.plugins.email.services.email.singlePointContact(user.email, user.username);
           done('No Campaign Found');
         } else {
           done(null);
         }
       } else {
+        await strapi.plugins.email.services.email.singlePointContact('shankyrana@hotmail.com', user.username);
         done('Campaign Not Found');
       }
     } else {
@@ -184,7 +186,7 @@ module.exports = {
     //Create new state for new user
     strapi.api.state.services.state.add(state);
     let oldDate = new Date();
-    await strapi.config.functions.kue.createJob(result.email, 'Campaign creation check', 'Checks whether the users has created campaign after two days or not and hits th mail.', result, 'high', 3, new Date(oldDate.getTime() + .5*60000),function(err) {
+    await strapi.config.functions.kue.createJob(result.email, 'Campaign creation check', 'Checks whether the users has created campaign after two days or not and hits th mail.', result, 'medium', 1, new Date(oldDate.getTime() + .5*60000),function(err) {
       if(err)
         console.log(err);
       else

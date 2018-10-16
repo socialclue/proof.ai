@@ -668,4 +668,59 @@ module.exports = {
         };
         return send(mailOptions);
     },
+
+    /**
+     * Single Point Contact Request Email.
+     * @param email
+     * @param name
+     * @returns {Promise<*>}
+     */
+    singlePointContact: async (email, name) =>  {
+        const mailSub = "Need Help?"
+        const content =`
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                  <div>Hey ${name},</div>
+                  <div>&nbsp;</div>
+                  <div>Hope everything is going great with you on converting users on your website.Just checking if everything is good on your end or not.</div>
+                  <div>&nbsp;</div>
+                  <div>I am your account manager and your single point of contact.</div>
+                  <div>&nbsp;</div>
+                  <div>I'd like to get on a call with you and help you out in taking your next steps with the Influence journey.</div>
+                  <div>&nbsp;</div>
+                  <div>It'd be great if you can provide me 3 available times as per your schedule so that I can help you in setting up the account for you, and guide you on how to use the product in the best possible manner.</div>
+                  <div>&nbsp;</div>
+                  <div>If you have any other queries please feel free to reply back to this email and we'll speak to you :D</div>
+                  <div>&nbsp;</div>
+                  <div>Looking forward to hearing from you.</div>
+              </td>
+            </tr>
+          </table>
+          <table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+            <tr>
+              <td style="padding:18px 0px 18px 0px;line-height:22px;text-align:inherit;"
+                  height="100%"
+                  valign="top"
+                  bgcolor="">
+                <div>Best Wishes</div>
+                <div>Douglas Mehta</div>
+              </td>
+            </tr>
+          </table>
+        `;
+
+        var mytemp = template.commontemp(mailSub, name, content);
+
+        let mailOptions = {
+          from: 'info@useinfluence.co',
+          to: email,
+          subject: mailSub,
+          html: mytemp
+        };
+        return send(mailOptions);
+    },
 };
