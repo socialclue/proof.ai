@@ -462,6 +462,9 @@ module.exports = {
             ]
           }
         },
+        "sort" : [
+            { "@timestamp" : {"order" : "desc" } }
+        ],
         "size": 1
       }
     };
