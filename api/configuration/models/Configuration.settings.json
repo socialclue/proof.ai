@@ -34,7 +34,7 @@
       "multiple": false
     },
     "toggleMap": {
-      "type": "boolean",
+      "type": "string",
       "multiple": false
     },
     "channel": {
