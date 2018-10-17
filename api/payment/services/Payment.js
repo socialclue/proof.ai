@@ -231,6 +231,10 @@ module.exports = {
     }
 
     if(payment_subscription.error) {
+      await strapi.plugins.email.services.email.paymentFailed(
+        user.email,
+        user.username
+      );
       return { error: true, message: payment_subscription.message.error };
     }
 
@@ -348,9 +352,13 @@ module.exports = {
           }
         });
         console.log(payment_add_charge, '==================>');
-        if(!payment_add_charge)
+        if(!payment_add_charge) {
+          await strapi.plugins.email.services.email.paymentFailed(
+            user.email,
+            user.username
+          );
           return { error: true, message: { message: "Card declined" }};
-        else {
+        } else {
           let profileData = await Profile.findOne({user: user._id});
           const profile = await Profile.findOneAndUpdate(
             {user: user._id},
