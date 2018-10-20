@@ -341,7 +341,7 @@ module.exports = {
           userDetails = await userDetails.filter(user => user.trackingId === trackingId);
           userDetails = await userDetails.filter((user, index, self) => self.findIndex(t => t.email === user.email) === index);
 
-          if(type == 'journey')
+          if(type == 'journey' && !limit)
             userDetails = userDetails.slice(0, Number(configuration.panelStyle.recentNumber));
 
           userDetails.sort(sortByDateAsc);
