@@ -305,7 +305,7 @@ module.exports = {
             "sort" : [
               { "timestamp" : {"order" : "desc", "mode" : "max"}}
             ],
-            "size": limit?10000:Number(configuration.panelStyle.recentNumber)
+            "size": 10000
           }
         };
         break;
@@ -340,6 +340,10 @@ module.exports = {
 
           userDetails = await userDetails.filter(user => user.trackingId === trackingId);
           userDetails = await userDetails.filter((user, index, self) => self.findIndex(t => t.email === user.email) === index);
+
+          if(type == 'journey')
+            userDetails = userDetails.slice(0, Number(configuration.panelStyle.recentNumber));
+
           userDetails.sort(sortByDateAsc);
 
           if(!userDetails.length)
