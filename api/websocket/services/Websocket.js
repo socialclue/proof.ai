@@ -89,30 +89,30 @@ const campaignLogger = function(value, done) {
         path: value.source.url.pathname
       };
 
-      // await getUser(userDetail.email, (err, userInfo) => {
-      //   if(err)
-      //     done(err);
-      //   else if(userDetail) {
-      //     userDetail['username'] = userDetail.username ? userDetail.username : userInfo.username;
-      //     userDetail['profile_pic'] = userInfo.profile_pic;
-      //
-      //     /**
-      //     *log data to elasticsearch
-      //     **/
-      //     client.create({
-      //       index: `signups`,
-      //       type: 'user',
-      //       id: uuidv1(),
-      //       body: userDetail
-      //     }, (err, res)=>{
-      //
-      //       if(err)
-      //         done(err);
-      //       else
-      //         done();
-      //     });
-      //   }
-      // });
+      await getUser(userDetail.email, (err, userInfo) => {
+        if(err)
+          done(err);
+        else if(userDetail) {
+          userDetail['username'] = userDetail.username ? userDetail.username : userInfo.username;
+          userDetail['profile_pic'] = userInfo.profile_pic;
+
+          /**
+          *log data to elasticsearch
+          **/
+          client.create({
+            index: `signups`,
+            type: 'user',
+            id: uuidv1(),
+            body: userDetail
+          }, (err, res)=>{
+
+            if(err)
+              done(err);
+            else
+              done();
+          });
+        }
+      });
     }
   })
   .catch(err => {
