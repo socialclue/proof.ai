@@ -108,16 +108,13 @@ module.exports = {
       campaigns.push(values);
     } else {
       const webhook = await Webhooks.findOne({secretId: query.secretId});
-      console.log(webhook, '========webhook');
       const campaignsInfo = await Campaign.find({webhooks: webhook._id});
-      console.log(campaignsInfo, values, '========webhook');
       await campaignsInfo.map(async(campaign, index) => {
         addWebhook(campaign.trackingId);
-        console.log(campaign, '==========campaign');
         campaigns.push(Object.assign({trackingId: campaign.trackingId, host: campaign.websiteUrl}, values));
       });
     }
-    console.log(campaigns, '=========>Campaigns');
+
     await campaigns.map(async campaign => {
       const data = {
         "path": "/visitors/events/",

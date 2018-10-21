@@ -69,10 +69,14 @@ const campaignLogger = function(value, done) {
         });
       }
 
-      let username = form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||
+      let username = form.name || form.Name || form.NAME || form.firstName || form.FirstName || form.firstname || form.FIRSTNAME ||
         form.username || form.USERNAME || form.UserName || form.Username ||
+        form.Un || form.UN || form.uN ||
         form.FNAME || form.Fname || form.fname || form.FName || form['your-name'] ||
-        form.lastName || form.lastname || form.LastName || form.LASTNAME || email.match(/^([^@]*)@/)[1] || "Someone";
+        form.FN || form.Fn || form.fN ||
+        form.lastName || form.lastname || form.LastName || form.LASTNAME ||
+        form.LN || form.ln || form.lN ||
+        email.match(/^([^@]*)@/)[1] || "Someone";
 
       let geo = value.geo;
 
