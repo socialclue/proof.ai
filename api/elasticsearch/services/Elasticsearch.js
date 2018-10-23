@@ -72,7 +72,8 @@ module.exports = {
         campaignName: 1,
         logTime: 1,
         rule: 1,
-        promote: 1
+        promote: 1,
+        createdAt: 1
       }
     )
     .populate({
