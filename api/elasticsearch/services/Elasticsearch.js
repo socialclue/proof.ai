@@ -101,6 +101,7 @@ module.exports = {
       if(result) {
         let newRule = result.rule;
         newRule['companyName'] = result.campaignName;
+        newRule['createdAt'] = result.createdAt;
         newRule['logTime'] = result.logTime;
         return newRule;
       } else {
