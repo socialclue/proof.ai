@@ -252,19 +252,19 @@ module.exports = {
 
   fetchTrackingId: (params) => {
 		return Campaign
-      .findOne(
-				{
-					trackingId: params?params.trackingId:null
-				},
-				{
-					isActive: 1,
-					websiteUrl: 1,
-					_id: 0
-				}
-			)
-			.exec()
-			.then(data => data);
-		},
+    .findOne(
+			{
+				trackingId: params?params.trackingId:null
+			},
+			{
+				isActive: 1,
+				websiteUrl: 1,
+				_id: 0
+			}
+		)
+		.exec()
+		.then(data => data);
+	},
 
   /**
    * Promise to add a/an new campaign with default configuration and rules.
@@ -712,4 +712,36 @@ module.exports = {
     return response;
   },
 
+  /**
+   * Promise to fetch all campaign with trackingId.
+   *
+   * @return {Promise}
+   */
+
+  GetActiveCampaigns: async (done) => {
+    await Campaign
+    .find({ isActive: true },{ trackingId: 1 })
+    .lean()
+    .exec()
+    .then(data => done(data))
+  },
+
+  /**
+   * Promise to fetch a/an campaign with profile and user.
+   *
+   * @return {Promise}
+   */
+
+  fetchCampaignAndUser: (params) => {
+    return Campaign
+      .findOne(_.pick(params, _.keys(Campaign.schema.paths)))
+      .populate({
+        path: 'profile',
+        select: '_id user uniqueVisitorQouta uniqueVisitors uniqueVisitorsQoutaLeft',
+        populate: {
+          path: 'user',
+          select: 'email username'
+        }
+      });
+  },
 };
