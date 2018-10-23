@@ -74,8 +74,10 @@ const campaignLogger = function(value, done) {
         form.Un || form.UN || form.uN ||
         form.FNAME || form.Fname || form.fname || form.FName || form['your-name'] ||
         form.FN || form.Fn || form.fN ||
+        form['First Name'] || form['first name'] ||
         form.lastName || form.lastname || form.LastName || form.LASTNAME ||
         form.LN || form.ln || form.lN ||
+        form['Last Name'] || form['last name'] ||
         email.match(/^([^@]*)@/)[1] || "Someone";
 
       let geo = value.geo;
