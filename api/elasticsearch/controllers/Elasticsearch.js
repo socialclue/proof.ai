@@ -83,6 +83,24 @@ module.exports = {
     });
   },
 
+  getAllUniqueClick: async(ctx) => {
+
+    let index = 'filebeat-*';
+    let trackingId = ctx.params._id;
+
+    if (!ctx.params){
+      ctx.send({
+        message: 'invalid params if you want to send data using body use other params type'
+      });
+    }
+
+    let data = await strapi.services.elasticsearch.getAllUniqueClick(index, trackingId);
+
+    ctx.send({
+      message: data
+    });
+  },
+
   mapGraph: async(ctx) => {
     let index = 'filebeat-*';
     let trackingIds = ctx.request.body;

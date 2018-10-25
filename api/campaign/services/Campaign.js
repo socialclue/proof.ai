@@ -98,6 +98,16 @@ let getUniqueUsers = async function(index, trackingId, callback) {
   }
 }
 
+let getUniqueClicks = async function(index, trackingId, callback) {
+  try {
+    await strapi.services.elasticsearch.getAllUniqueClick(index, trackingId).then(res=>{
+      callback(null, res);
+    });
+  } catch(err) {
+    callback(err);
+  }
+}
+
 let getSignUps = async function(index, trackingId, type, host, callback) {
   try {
     await strapi.services.elasticsearch.notification(index, trackingId, type, true, host).then(res=>{
@@ -659,6 +669,16 @@ module.exports = {
 
 		await Promise.all(pica);
 
+    let uniqueClicks = 0;
+    let clicks = campaignWebsites.map(async camp => {
+        await getUniqueClicks('filebeat-*', camp.trackingId, (err, uniqueClick) => {
+					if(!err)
+						uniqueClicks = uniqueClicks + Number(uniqueClick);
+				});
+		});
+
+		await Promise.all(clicks);
+
 		// let userSignUps = [];
 		let signedUpUsers = campaignWebsites.map(async camp => {
 			await getSignUps('filebeat-*', camp.trackingId, 'journey', host, (err, response) => {
@@ -672,7 +692,7 @@ module.exports = {
 
 		await Promise.all(signedUpUsers);
 
-    return {websiteLive: campaignWebsites, notificationCount: countConfig, uniqueUsers: uniqueUsers };
+    return { websiteLive: campaignWebsites, notificationCount: countConfig, uniqueUsers: uniqueUsers, uniqueClicks: uniqueClicks };
   },
 
 	/**

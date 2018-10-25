@@ -448,6 +448,32 @@ module.exports = {
     return response;
   },
 
+  getAllUniqueClick: async (index, trackingId) => {
+    const query = {
+      index: index,
+      body: {
+        query: {
+          "bool": {
+            "must": [
+              { "match": { "json.value.trackingId":  trackingId }},
+              { "match": { "json.value.event":  'click' }}
+            ]
+          }
+        },
+        "size": 0
+      }
+    };
+
+    const response = await new Promise((resolve, reject) => {
+     client.search(query, function (err, resp, status) {
+        if (err) reject(err);
+        else resolve(resp);
+      });
+    });
+
+    return response.hits?response.hits.total:0;
+  },
+
   validatePath: async (index, trackingId, path) => {
     const query = {
       index: index,

@@ -33,6 +33,14 @@
       }
     },
     {
+      "method": "GET",
+      "path": "/elasticsearch/clicks/:_id",
+      "handler": "Elasticsearch.getAllUniqueClick",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "POST",
       "path": "/elasticsearch/map",
       "handler": "Elasticsearch.mapGraph",

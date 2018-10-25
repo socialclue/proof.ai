@@ -111,7 +111,6 @@ const campaignLogger = function(value, done) {
               id: uuidv1(),
               body: userDetail
             }, (err, res)=> {
-              console.log(res, '==============>res');
               if(err)
                 done(err);
               else
