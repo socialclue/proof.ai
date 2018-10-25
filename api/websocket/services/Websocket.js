@@ -94,31 +94,43 @@ const campaignLogger = function(value, done) {
         host: value.source.url.host,
         path: value.source.url.pathname
       };
+      if(userDetail.email)
+        await getUser(userDetail.email, (err, userInfo) => {
+          if(err)
+            done(err);
+          else if(userDetail) {
+            userDetail['username'] = userDetail.username ? userDetail.username : userInfo.username;
+            userDetail['profile_pic'] = userInfo.profile_pic;
 
-      await getUser(userDetail.email, (err, userInfo) => {
-        if(err)
-          done(err);
-        else if(userDetail) {
-          userDetail['username'] = userDetail.username ? userDetail.username : userInfo.username;
-          userDetail['profile_pic'] = userInfo.profile_pic;
-
-          /**
-          *log data to elasticsearch
-          **/
-          client.create({
-            index: `signups`,
-            type: 'user',
-            id: uuidv1(),
-            body: userDetail
-          }, (err, res)=>{
-
-            if(err)
-              done(err);
-            else
-              done();
-          });
-        }
-      });
+            /**
+            *log data to elasticsearch
+            **/
+            client.create({
+              index: `signups`,
+              type: 'user',
+              id: uuidv1(),
+              body: userDetail
+            }, (err, res)=> {
+              console.log(res, '==============>res');
+              if(err)
+                done(err);
+              else
+                done();
+            });
+          }
+        });
+      else
+        client.create({
+          index: `signups`,
+          type: 'user',
+          id: uuidv1(),
+          body: userDetail
+        }, (err, res)=> {
+          if(err)
+            done(err);
+          else
+            done();
+        });
     }
   })
   .catch(err => {
