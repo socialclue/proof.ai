@@ -341,7 +341,7 @@ module.exports = {
           }
 
           userDetails = await userDetails.filter(user => user.trackingId === trackingId);
-          userDetails = await userDetails.filter((user, index, self) => self.findIndex(t => t.email === user.email) === index);
+          userDetails = await userDetails.filter((user, index, self) => self.findIndex(t => t.email && user.email?t.email === user.email:t.username === user.username) === index);
 
           if(type == 'journey' && !limit)
             userDetails = userDetails.slice(0, Number(configuration.panelStyle.recentNumber));
