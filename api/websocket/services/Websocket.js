@@ -73,7 +73,6 @@ const campaignLogger = function(value, done) {
         form.username || form.USERNAME || form.UserName || form.Username ||
         form.Un || form.UN || form.uN ||
         form.FNAME || form.Fname || form.fname || form.FName || form['your-name'] ||
-        form.FN || form.Fn || form.fN ||
         form['First Name'] || form['first name'] ||
         form.lastName || form.lastname || form.LastName || form.LASTNAME ||
         form.LN || form.ln || form.lN ||
@@ -84,7 +83,7 @@ const campaignLogger = function(value, done) {
 
       let userDetail = {
         email: email,
-        username: username,
+        username: username?username.replace(/[0-9]/g, '').toLowerCase().split('.').join(' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '):username,
         timestamp: moment(value.timestamp).format(),
         city: geo?geo.city:null,
         country: geo?geo.country:null,
