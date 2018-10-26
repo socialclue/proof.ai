@@ -101,6 +101,25 @@ module.exports = {
     });
   },
 
+  deleteESUser: async(ctx) => {
+
+    let index = 'signups';
+    let _id = ctx.params._id;
+    let _type = ctx.params._type;
+
+    if (!ctx.params){
+      ctx.send({
+        message: 'invalid params if you want to send data using body use other params type'
+      });
+    }
+
+    let data = await strapi.services.elasticsearch.deleteESUser(index, _id, _type);
+
+    ctx.send({
+      message: data
+    });
+  },
+
   mapGraph: async(ctx) => {
     let index = 'filebeat-*';
     let trackingIds = ctx.request.body;

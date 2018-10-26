@@ -679,4 +679,12 @@ module.exports = {
 
     return await campaignConversionDetails;
   }
+
+  deleteESUser: async (index, _id, _type) => {
+    return await client.delete({
+      index: index,
+      type: _type,
+      id: _type
+    });
+  }
 }
