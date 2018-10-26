@@ -678,13 +678,19 @@ module.exports = {
     });
 
     return await campaignConversionDetails;
-  }
+  },
 
   deleteESUser: async (index, _id, _type) => {
-    return await client.delete({
+    const response =  await client.delete({
       index: index,
       type: _type,
-      id: _type
+      id: _id
     });
+
+    if(response && response.result == 'deleted')
+      return response;
+    else
+      return { error: true, message: 'User not found' };
   }
+  
 }
