@@ -330,7 +330,10 @@ module.exports = {
       if(type == 'journey' || type == 'identification') {
         if(response.hits && response.hits.hits.length) {
           await response.hits.hits.map(details => {
-            userDetails.push(details._source);
+            let source = details._source;
+            source['_id'] = details._id;
+            source['type'] = details._type;
+            userDetails.push(source);
           });
 
           /**
