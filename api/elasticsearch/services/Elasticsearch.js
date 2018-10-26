@@ -183,8 +183,8 @@ module.exports = {
                   {
                     "bool": {
                       "should": [
-                        { "match": { "json.value.source.url.hostname": 'useinfluence.co' }},
-                        { "match": { "json.value.source.url.hostname": `www.${'useinfluence.co'}` }},
+                        { "match": { "json.value.source.url.hostname": host }},
+                        { "match": { "json.value.source.url.hostname": `www.${host}` }},
                       ],
                     }
                   },
@@ -223,8 +223,8 @@ module.exports = {
             {
               "bool": {
                 "should": [
-                  { "match": { "host.keyword": 'useinfluence.co' }},
-                  { "match": { "host.keyword": `www.${'useinfluence.co'}` }},
+                  { "match": { "host.keyword": host }},
+                  { "match": { "host.keyword": `www.${host}` }},
                 ],
               }
             },
@@ -270,8 +270,8 @@ module.exports = {
             {
               "bool": {
                 "should": [
-                  { "match": { "host.keyword": 'useinfluence.co' }},
-                  { "match": { "host.keyword": `www.${'useinfluence.co'}` }},
+                  { "match": { "host.keyword": host }},
+                  { "match": { "host.keyword": `www.${host}` }},
                 ],
               }
             },
