@@ -102,7 +102,7 @@ const q = kue.createQueue({
 });
 
 
-kue.app.listen(3002);
+// kue.app.listen(3002);
 
 
 module.exports = {
