@@ -84,7 +84,7 @@ let configurationDefault = {
   "contentText" : "Company Name",
 	"visitorText" : "people",
 	"notificationUrl" : "",
-	"toggleMap" : true,
+	"toggleMap" : "map",
 	"liveVisitorCount": 0,
 	"otherText": "signed up for"
 };
