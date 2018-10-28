@@ -670,11 +670,11 @@ module.exports = {
 
 		await Promise.all(pica);
 
-    let uniqueClicks = 0;
+    let uniqueClicks = [];
     let clicks = campaignWebsites.map(async camp => {
         await getUniqueClicks('filebeat-*', camp.trackingId, (err, uniqueClick) => {
 					if(!err)
-						uniqueClicks = uniqueClicks + Number(uniqueClick);
+						uniqueClicks.push({_id: camp._id, clicks: uniqueClick});
 				});
 		});
 
