@@ -41,6 +41,14 @@
       }
     },
     {
+      "method": "GET",
+      "path": "/elasticsearch/path/:trackingId/:path",
+      "handler": "Elasticsearch.validatePath",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "DELETE",
       "path": "/elasticsearch/delete/:_id/:_type",
       "handler": "Elasticsearch.deleteESUser",

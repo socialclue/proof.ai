@@ -478,6 +478,7 @@ module.exports = {
   },
 
   validatePath: async (index, trackingId, path) => {
+    path = path.replace('/', '*');
     const query = {
       index: index,
       body: {
@@ -485,7 +486,12 @@ module.exports = {
           "bool": {
             "must": [
               { "match": { "json.value.trackingId":  trackingId }},
-              { "match": { "json.value.source.url.pathname":  path }},
+              {
+                "query_string" : {
+                  "default_field" : "json.value.source.url.pathname",
+                  "query" : `*${path}*`
+                }
+              },
               {
                 "range": {
                   "@timestamp": {
@@ -692,5 +698,5 @@ module.exports = {
     else
       return { error: true, message: 'User not found' };
   }
-  
+
 }

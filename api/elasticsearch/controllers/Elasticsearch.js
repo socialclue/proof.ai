@@ -120,6 +120,24 @@ module.exports = {
     });
   },
 
+  validatePath: async(ctx) => {
+    let index = 'filebeat-*';
+    let trackingId = ctx.params.trackingId;
+    let path = ctx.params.path;
+
+    if (!ctx.params){
+      ctx.send({
+        message: 'invalid params if you want to send data using body use other params type'
+      });
+    }
+
+    let data = await strapi.services.elasticsearch.validatePath(index, trackingId, path);
+
+    ctx.send({
+      message: data
+    });
+  },
+
   mapGraph: async(ctx) => {
     let index = 'filebeat-*';
     let trackingIds = ctx.request.body;
