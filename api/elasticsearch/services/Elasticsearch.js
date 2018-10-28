@@ -360,7 +360,7 @@ module.exports = {
       } else
         return { response, rule, configurations };
     } else {
-      return { error: "Tracking Id not found" };
+      return { error: "Tracking Id Not Found" };
     }
   },
 
