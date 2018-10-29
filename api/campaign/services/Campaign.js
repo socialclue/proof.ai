@@ -340,7 +340,6 @@ module.exports = {
           let newConfiguration = Object.assign({}, configurationDefault);
           newConfiguration['campaign'] = data._id;
           newConfiguration['notificationType'] = notification._id;
-					newConfiguration['notificationUrl'] = `https://useinfluence.co/signup?affiliate=${user.affiliateId}`;
 					if(notification.notificationName == 'Bulk Activity') {
 						newConfiguration['panelStyle'] = {
 					    "radius" : 9,
@@ -387,6 +386,7 @@ module.exports = {
 					  };
 						newConfiguration['otherText'] = 'signed up for',
 						newConfiguration['contentText'] = 'Company';
+            newConfiguration['notificationUrl'] = `https://useinfluence.co/signup?affiliate=${user.affiliateId}`;
 					}
 					if(notification.notificationName == 'Recent Activity') {
 						newConfiguration['panelStyle'] = {
@@ -439,6 +439,7 @@ module.exports = {
 					  };
 						newConfiguration['otherText'] = 'Recently signed up for',
 						newConfiguration['contentText'] = 'Company Name';
+            newConfiguration['notificationUrl'] = `https://useinfluence.co/signup?affiliate=${user.affiliateId}`;
 					}
 					if(notification.notificationName == 'Live Visitor Count') {
 						newConfiguration['panelStyle'] = {
@@ -486,6 +487,7 @@ module.exports = {
 					  };
 						newConfiguration['liveVisitorText'] = 'are viewing this site';
 						newConfiguration['contentText'] = 'Influence';
+            newConfiguration['notificationUrl'] = `https://useinfluence.co/signup?affiliate=${user.affiliateId}`;
 					}
 					// if(notification.notificationName == 'Review Notification') {
 					// 	newConfiguration['panelStyle'] = {
