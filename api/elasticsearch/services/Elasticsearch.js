@@ -478,7 +478,7 @@ module.exports = {
   },
 
   validatePath: async (index, trackingId, path) => {
-    path = path.replace('/', '*');
+    path = path.split('/').join('*');
     const query = {
       index: index,
       body: {
