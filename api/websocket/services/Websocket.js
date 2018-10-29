@@ -58,7 +58,7 @@ const campaignLogger = function(value, done) {
 
     captureLeads = captureLeads.map(lead => lead.url);
     const pattern = value.source.url.pathname;
-    if(captureLeads.findIndex(value => value.match(pattern)) >= 0) {
+    if(captureLeads.findIndex(value => pattern.match(value)) >= 0) {
       let form = value.form;
       let email = form.email || form.EMAIL || form.Email || form['your-email'];
       if(!email) {
