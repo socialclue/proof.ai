@@ -26,13 +26,3 @@ spec:
           value: development
         - name: REDIS_HOST
           value: "35.237.30.58"
-        - name: SENDGRID_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: environment
-              key: sendgridkey
-        - name: STRIPE_KEY
-          valueFrom:
-            secretKeyRef:
-              name: environment
-              key: stripekey
