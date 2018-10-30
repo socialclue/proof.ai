@@ -33,6 +33,30 @@
       }
     },
     {
+      "method": "GET",
+      "path": "/elasticsearch/clicks/:_id",
+      "handler": "Elasticsearch.getAllUniqueClick",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/elasticsearch/path/:trackingId/:path",
+      "handler": "Elasticsearch.validatePath",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/elasticsearch/delete/:_id/:_type",
+      "handler": "Elasticsearch.deleteESUser",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "POST",
       "path": "/elasticsearch/map",
       "handler": "Elasticsearch.mapGraph",

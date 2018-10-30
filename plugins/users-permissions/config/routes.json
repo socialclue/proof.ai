@@ -203,6 +203,15 @@
       }
     },
     {
+      "method": "POST",
+      "path": "/auth/resetpassword",
+      "handler": "Auth.resetPassword",
+      "config": {
+        "policies": [],
+        "prefix": ""
+      }
+    },
+    {
       "method": "GET",
       "path": "/auth/verify/:code",
       "handler": "Auth.verifyUser",

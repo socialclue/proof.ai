@@ -26,8 +26,24 @@
     },
     {
       "method": "POST",
+      "path": "/oauth/zapier",
+      "handler": "Oauth.zapier",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
       "path": "/oauth/access_token/:type",
       "handler": "Oauth.access_token",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/oauth/apikey",
+      "handler": "Oauth.apiKeyGenerate",
       "config": {
         "policies": []
       }

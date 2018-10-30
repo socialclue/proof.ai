@@ -10,9 +10,9 @@ const uuid = require('uuid/v4');
 
 var trackingId = [
   "INF-406jkjiji00uszj",
-  "INF-405gzoijjqu9mpg",
-  "INF-405gzoijjr5ckll",
-  "INF-405gzohjjzna2nb"
+  "INF-yj5h7rjmwtohi9",
+  // "INF-405gzoijjr5ckll",
+  // "INF-405gzohjjzna2nb"
 ];
 
 var randomTrackingId = trackingId[Math.floor(Math.random()*trackingId.length)];
@@ -31,11 +31,10 @@ var randomTrackingId = trackingId[Math.floor(Math.random()*trackingId.length)];
           throw res.error;
         const message = res.body.message;
         const userDetails = message.userDetails;
-        expect(message).to.have.own.property('configuration');
         expect(message).to.have.own.property('response');
         expect(message).to.have.own.property('rule');
-        expect(message).to.have.own.property('userDetails');
-        expect(userDetails).to.be.an('array');
+        // expect(message).to.have.own.property('userDetails');
+        // expect(userDetails).to.be.an('array');
         // expect(userDetails).to.have.all.keys('trackingId');
       });
     });
@@ -53,7 +52,7 @@ var randomTrackingId = trackingId[Math.floor(Math.random()*trackingId.length)];
         if(!res)
           throw res.error;
         const message = res.body.message;
-        expect(message).to.have.own.property('configuration');
+        // expect(message).to.have.own.property('configuration');
         expect(message).to.have.own.property('response');
         expect(message).to.have.own.property('rule');
       });
@@ -72,7 +71,7 @@ var randomTrackingId = trackingId[Math.floor(Math.random()*trackingId.length)];
         if(!res)
           throw res.error;
         const message = res.body.message;
-        expect(message).to.have.own.property('configuration');
+        // expect(message).to.have.own.property('configuration');
         expect(message).to.have.own.property('response');
         expect(message).to.have.own.property('rule');
       });

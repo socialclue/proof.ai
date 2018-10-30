@@ -23,6 +23,20 @@ module.exports = {
   },
 
   /**
+   * Retrieve user campaign zapier records.
+   *
+   * @return {Object|Array}
+   */
+
+  findZapierCampaigns: async (ctx) => {
+    const apiKey = ctx.query.apiKey;
+    const data = await strapi.services.campaign.findZapierCampaigns(apiKey);
+
+    // Send 200 `ok`
+    ctx.send(data);
+  },
+
+  /**
    * Retrieve campaign records.
    *
    * @return {Object|Array}
@@ -76,7 +90,7 @@ module.exports = {
    */
 
   create: async (ctx) => {
-    const data = await strapi.services.campaign.add(ctx.request.body);
+    const data = await strapi.services.campaign.add(ctx.state.user, ctx.request.body);
     // Send 201 `created`
     ctx.created(data);
   },
@@ -121,4 +135,19 @@ module.exports = {
     // Send 200 `ok`
     ctx.send(data);
   },
+
+
+    /**
+     * Download user's analytics info.
+     *
+     * @return {Object|Array}
+     */
+
+    downloadAnalytics: async (ctx) => {
+      const users = ctx.request.body.users;
+      const data = await strapi.services.campaign.downloadAnalytics(users);
+
+      // Send 200 `ok`
+      ctx.send(data);
+    },
 };

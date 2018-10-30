@@ -8,6 +8,7 @@
 
 // Public dependencies.
 const _ = require('lodash');
+const moment = require('moment');
 
 let validatePath = async function(index, trackingId, path, callback) {
  try {
@@ -64,9 +65,15 @@ module.exports = {
       .populate(_.keys(_.groupBy(_.reject(strapi.models.notificationpath.associations, {autoPopulate: false}), 'alias')).join(' '));
 
     notificationPaths = await notificationPaths.map(async path => {
-      return await validatePath('filebeat-*', campaign.trackingId, path.url, (err, pathResponse) => {
+      return await validatePath('filebeat-*', campaign.trackingId, path.url, async (err, pathResponse) => {
         if(pathResponse && pathResponse.hits && pathResponse.hits.total > 0) {
-          Notificationpath.update({_id: path._id}, {$set:{status:'primary'}});
+          let status = 'danger';
+          const timeStamp = pathResponse.hits.hits[0]['_source']['@timestamp'];
+          if(moment(timeStamp) > moment().subtract(24, 'hours'))
+            status = 'success';
+          else
+            status = 'primary';
+          const test = await Notificationpath.update({_id: path._id}, {$set:{ status:status }});
         }
       });
     })
@@ -114,8 +121,21 @@ module.exports = {
     else
       values['status'] = 'unverified';
 
-    const data = await Notificationpath.create(values);
-    return data;
+    const testDoc = {
+      url: values.url,
+      domain: values.domain,
+      campaignName: values.campaignName,
+      type: values.type
+    };
+
+    const checkPath = await Notificationpath.findOne(testDoc);
+
+    if(checkPath) {
+      return { message: 'Path already added', error: true };
+    } else {
+      const data = await Notificationpath.create(values);
+      return data;
+    }
   },
 
   /**

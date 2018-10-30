@@ -48,25 +48,28 @@ module.exports = {
       )
     );
 
-    const present_state = saved_state.present_state;
-    const future_state = saved_state.future_state;
+    if(saved_state) {
+      const present_state = saved_state.present_state;
+      const future_state = saved_state.future_state;
 
-    //Add new values to saved_state
-    saved_state.past_state = {
-      state: present_state.state,
-      created_at: present_state.created_at,
-      updated_at: present_state.updated_at
-    };
+      //Add new values to saved_state
+      saved_state.past_state = {
+        state: present_state.state,
+        created_at: present_state.created_at,
+        updated_at: present_state.updated_at
+      };
 
-    saved_state.present_state['state'] = "Campaign Created";
-    saved_state.present_state['updated_at'] = new Date();
+      saved_state.present_state['state'] = "Campaign Created";
+      saved_state.present_state['updated_at'] = new Date();
 
-    saved_state.future_state['state'] = "Configure Notification and Update";
-    saved_state.future_state['updated_at'] = new Date();
-    saved_state.campaign = result._id;
+      saved_state.future_state['state'] = "Configure Notification and Update";
+      saved_state.future_state['updated_at'] = new Date();
+      saved_state.campaign = result._id;
 
-    // Update state with new values
-    await strapi.api.state.services.state.edit({_id: saved_state._id}, saved_state);
+      // Update state with new values
+      await strapi.api.state.services.state.edit({_id: saved_state._id}, saved_state);
+    }
+
   },
 
   // Before updating a value.

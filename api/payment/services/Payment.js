@@ -31,6 +31,7 @@ function doRequest(options) {
       if(res.statusCode >= 400) {
         return resolve({error: true, message: body});
       }
+
       const response = typeof body === 'string'? JSON.parse(body) : body;
       if (!error && res.statusCode == 200 || !response.error) {
         resolve(body);
@@ -117,7 +118,6 @@ module.exports = {
         password: user.password
       }
     }); //retrieve auth token for logged in user from service bot
-
     var invoices = await doRequest({
       method: 'GET',
       url:'https://servicebot.useinfluence.co/api/v1/invoices/own',
@@ -126,7 +126,6 @@ module.exports = {
         'Content-Type': 'application/json'
       }
     }); //retrieve user invoices from service bot
-
     return JSON.parse(invoices); //returns parsed user's invoices
   },
 
@@ -228,11 +227,15 @@ module.exports = {
         }
       });
     } else {
-      return { message: "user not found", err: true };
+      return { message: "user not found", error: true };
     }
 
     if(payment_subscription.error) {
-      return { err: true, message: payment_subscription.error };
+      await strapi.plugins.email.services.email.paymentFailed(
+        user.email,
+        user.username
+      );
+      return { error: true, message: payment_subscription.message.error };
     }
 
     //created payments object for storing
@@ -259,23 +262,131 @@ module.exports = {
       coupon_details: coupon,
       plan_details: payment_subscription.payment_plan,
       subscribed_at: payment_subscription.subscribed_at,
-      servicebot_user_id: payment_subscription.user_id
+      servicebot_user_id: payment_subscription.user_id,
+      service_instance_id: payment_subscription.id
     };
 
     await Plan.create(plan_value);
 
     //Create new payment document
     const data = await Payment.create(payment_values);
+
+    let profileData = await Profile.findOne({user: user._id});
+    const profile = await Profile.findOneAndUpdate(
+      {user: user._id},
+      {$set:
+        {
+          plan: plan,
+          uniqueVisitorQouta: profileData.uniqueVisitorQouta + Number(plan.description),
+          uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(plan.description)
+        }
+      },
+      {new: true}
+    );
+    await strapi.plugins.email.services.email.planUpgrade(
+      user.email,
+      user.username,
+      {
+        name: plan.name,
+        uniqueVisitorQouta: profileData.uniqueVisitorQouta,
+        uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(plan.description)
+      }
+    );
+
     const userParams = {
       id: user._id
     };
 
     const userValues = {
-      path: '/dashboard'
+      path: '/dashboard',
+      servicebot:{
+        client_id: payment_subscription.user_id,
+        status: user.servicebot.status,
+        service_instance_id: payment_subscription.id
+      }
     };
 
     const userUpdate = strapi.plugins['users-permissions'].services.user.edit(userParams, userValues);
     return data;
+  },
+
+  /**
+   * Promise to update user plan and make payment.
+   *
+   * @return {Promise}
+   */
+  updatePlan: async (user, values) => {
+    let plan = values;
+    let payment_subscription, payment_instance, payment_add_charge;
+    // retrieve logged in user's auth token from servicebot
+    let auth_token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: user.email, password: user.password }});
+
+    if(auth_token) {
+        payment_instance = {
+          "statement_descriptor": "Useinfluence",
+          "name": plan.name,
+          "amount": plan.amount,
+          "currency": "usd",
+          "interval": plan.interval,
+          "interval_count": plan.interval_count,
+          "trial_period_days": 0,
+          "references":{}
+        };
+
+        payment_subscription = await doRequest({
+          method: 'POST',
+          url:`https://servicebot.useinfluence.co/api/v1/service-instances/${user.servicebot.service_instance_id}/change-price`,
+          json: payment_instance,
+          headers: {
+            Authorization: 'JWT ' + JSON.parse(auth_token).token,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        payment_add_charge = await doRequest({
+          method: 'POST',
+          url:`https://servicebot.useinfluence.co/api/v1/service-instances/${user.servicebot.service_instance_id}/approve`,
+          headers: {
+            Authorization: 'JWT ' + JSON.parse(auth_token).token,
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log(payment_add_charge, '==================>');
+        if(!payment_add_charge) {
+          await strapi.plugins.email.services.email.paymentFailed(
+            user.email,
+            user.username
+          );
+          return { error: true, message: { message: "Card declined" }};
+        } else {
+          let profileData = await Profile.findOne({user: user._id});
+          const profile = await Profile.findOneAndUpdate(
+            {user: user._id},
+            {$set:
+              {
+                plan: plan,
+                uniqueVisitorQouta: profileData.uniqueVisitorQouta + Number(plan.description),
+                uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(plan.description)
+              }
+            },
+            {new: true}
+          );
+          await strapi.plugins.email.services.email.planUpgrade(
+            user.email,
+            user.username,
+            {
+              name: plan.name,
+              uniqueVisitorQouta: profileData.uniqueVisitorQouta,
+              uniqueVisitorsQoutaLeft: profileData.uniqueVisitorsQoutaLeft + Number(plan.description)
+            }
+          );
+
+          return { error: false, message: { message: "Plan Upgraded" , profile: profile} };
+        }
+
+    } else {
+      return { message: "user not found", error: true };
+    }
   },
 
   /**

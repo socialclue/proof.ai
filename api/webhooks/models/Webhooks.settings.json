@@ -21,16 +21,13 @@
       "type": "string",
       "multiple": false
     },
-    "trackingId": {
-      "type": "string",
-      "multiple": false
-    },
-    "campaign": {
-      "model": "campaign"
-    },
     "secretId": {
       "type": "string",
       "multiple": false
+    },
+    "user": {
+      "model": "user",
+      "plugin": "users-permissions"
     }
   }
 }

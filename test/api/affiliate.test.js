@@ -1,5 +1,5 @@
 /**
- * Test Campaign Services !
+ * Test Affiliate Services !
  * @type {"assert".internal | ((value: any, message?: string) => void)}
  */
 
@@ -9,7 +9,7 @@ const request = require('co-supertest');
 const uuid = require('uuid/v4');
 const email = `${uuid()}@test.com`;
 const password = uuid();
-var Token, profile, user, campaign;
+var Token, user, affiliate;
 
 /**
  * Test the login user
@@ -34,57 +34,40 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Get User Profile
- **/
-  describe('find user`s profile test', () => {
-    it('it should get user`s profile', function *() {
+  * Create User affiliate
+  **/
+  describe('create user affiliate', () => {
+    it('it should create user`s affiliate', function *() {
       yield request(strapi.config.url)
-      .get(`/profile`)
-      .set('Authorization', `Bearer ${Token}`)
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .then((data, err) => {
-        if(data.error)
-          throw data.error;
-        profile = data.body;
-      });
-    });
-  });
-
-/**
- * Test Create Campaign
- **/
-  describe('campaign creation test', () => {
-    it('it should create campaign with configuration and rules', function *() {
-      yield request(strapi.config.url)
-      .post('/campaign')
+      .post('/affiliate')
       .set('Authorization', `Bearer ${Token}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send({
-        campaign: {
-          websiteUrl: 'servicebot.useinfluence.co',
-          campaignName: 'Acme1',
-          profile: profile._id
-        }
+        amount: '20',
+        withdrawn: false,
+        expiry: "2018-09-15T15:52:19.002Z",
+        affiliatedUser: user._id,
+        affiliatedByUser: user._id,
+        status: 'active'
       })
       .expect(201)
       .expect('Content-Type', /json/)
       .then((data, err) => {
         if(data.error)
           throw data.error;
-        campaign = data.body.data;
+        affiliate = data.body;
       });
     });
   });
 
 /**
- * Test Get User Campaigns
+ * Test Get User Profile
  **/
-  describe('campaign find all campaigns test', () => {
-    it('it should get all users campaign', function *() {
+  describe('find user`s affiliate', () => {
+    it('it should get user`s affiliate', function *() {
       yield request(strapi.config.url)
-      .get(`/campaign`)
+      .get(`/affiliate`)
       .set('Authorization', `Bearer ${Token}`)
       .expect(200)
       .expect('Content-Type', /json/)
@@ -96,12 +79,12 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Get One Campaigns
+ * Test Get One Affiliate
  **/
-  describe('campaign find one campaign test', () => {
-    it('it should get one campaign', function *() {
+  describe('find one affiliate test', () => {
+    it('it should get one affiliate', function *() {
       yield request(strapi.config.url)
-      .get(`/campaign/${campaign._id}`)
+      .get(`/affiliate/${affiliate._id}`)
       .set('Authorization', `Bearer ${Token}`)
       .expect(200)
       .expect('Content-Type', /json/)
@@ -113,17 +96,18 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Edit Campaign
+ * Test Edit User Affiliate
  **/
-  describe('campaign update test', () => {
-    it('it should update campaign', function *() {
+  describe('affiliate update test', () => {
+    it('it should update user`s affiliate', function *() {
       yield request(strapi.config.url)
-      .put(`/campaign/${campaign._id}`)
+      .put(`/affiliate/${affiliate._id}`)
       .set('Authorization', `Bearer ${Token}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send({
-        isActive: false
+        status: 'completed',
+        withdrawn: true
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -135,12 +119,12 @@ var Token, profile, user, campaign;
   });
 
 /**
-  * Test Delete Campaign
+  * Test Delete Affiliate
   **/
-  describe('campaign deletion test', () => {
-    it('it should delete campaign with configuration and rules', function *() {
+  describe('affiliate deletion test', () => {
+    it('it should delete affiliate', function *() {
       yield request(strapi.config.url)
-        .delete(`/campaign/${campaign._id}`)
+        .delete(`/affiliate/${affiliate._id}`)
         .set('Authorization', `Bearer ${Token}`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')

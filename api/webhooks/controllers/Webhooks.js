@@ -15,8 +15,8 @@ module.exports = {
    */
 
   find: async (ctx) => {
-    const campaignId = ctx.params.campaignId;
-    const data = await strapi.services.webhooks.fetchAll(campaignId);
+    const userId = ctx.state.user._id;
+    const data = await strapi.services.webhooks.fetchAll(userId);
 
     // Send 200 `ok`
     ctx.send(data);
@@ -46,7 +46,7 @@ module.exports = {
    */
 
   create: async (ctx) => {
-    const data = await strapi.services.webhooks.add(ctx.request.body);
+    const data = await strapi.services.webhooks.add(ctx.state.user, ctx.request.body);
 
     // Send 201 `created`
     ctx.created(data);

@@ -12,6 +12,17 @@ const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
 const shortid = require('shortid');
 const moment = require('moment');
 
+const genGuid = function() {
+    var s4 = function() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    };
+
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+};
+
 const createAffiliate = async function(userId, affiliateId) {
   const affiliateUser = await strapi.query('user', 'users-permissions').findOne({affiliateId: affiliateId});
   if(affiliateUser && userId) {
@@ -141,6 +152,34 @@ module.exports = {
         jwt: strapi.plugins['users-permissions'].services.jwt.issue(_.pick(user.toJSON ? user.toJSON() : user, ['_id', 'id'])),
         user: _.omit(user.toJSON ? user.toJSON() : user, ['password', 'resetPasswordToken'])
       });
+    } else if (params.password && params.passwordConfirmation && params.password !== params.passwordConfirmation) {
+      return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.password.matching' }] }] : 'Passwords do not match.');
+    } else {
+      return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.params.provide' }] }] : 'Incorrect params provided.');
+    }
+  },
+
+  resetPassword: async (ctx) => {
+    const params = _.assign({}, ctx.request.body, ctx.params);
+
+    if (params.password && params.passwordConfirmation && params.password === params.passwordConfirmation && params.passwordOld) {
+      const user = ctx.state.user;
+
+      const validateOldPassword = strapi.plugins['users-permissions'].services.user.validatePassword(params.passwordOld, user.password);
+
+      if(!validateOldPassword)
+        return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.invalid' }] }] : 'Old Password Invalid.');
+
+      if (!user) {
+        return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.code.provide' }] }] : 'Invalid request.');
+      }
+
+      user.password =  await strapi.plugins['users-permissions'].services.user.hashPassword(params);
+
+      // Update the user.
+      await strapi.query('user', 'users-permissions').update(user);
+
+      ctx.send({ message: 'Password updated', error: false });
     } else if (params.password && params.passwordConfirmation && params.password !== params.passwordConfirmation) {
       return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.password.matching' }] }] : 'Passwords do not match.');
     } else {
@@ -324,6 +363,7 @@ module.exports = {
 
     try {
       params['affiliateId'] = shortid.generate();
+      params['apiKey'] = genGuid();
       const user = await strapi.query('user', 'users-permissions').create(params);
       if(params.affiliate) {
         await createAffiliate(user._id, params.affiliate);

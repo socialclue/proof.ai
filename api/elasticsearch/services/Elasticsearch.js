@@ -12,7 +12,7 @@ const moment = require('moment');
 const uuidv1 = require('uuid/v1');
 
 const client = elasticsearch.Client({
-  host: '35.202.85.190:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
+  host: '104.196.139.231:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
   requestTimeout: Infinity, // Tested
   keepAlive: true, // Tested
   log: 'trace'
@@ -35,7 +35,23 @@ module.exports = {
 
   query: async (index,q) => {
     return new Promise((resolve, reject)=> {
-      client.search({index: index, q: q}, function (err,resp,status) {
+      client.search(
+        {
+          "index": index,
+          "body": {
+            "sort" : [
+                { "@timestamp" : {"order" : "desc" } }
+            ],
+            "query" : {
+              "bool": {
+                "must": [
+                  { "match": { "json.value.trackingId" : q } }
+                ]
+              }
+            }
+          }
+        }
+        , function (err,resp,status) {
         if (err) reject(err);
         else resolve(resp);
         strapi.log.info('---Client Search Returned--- ',resp);
@@ -55,7 +71,9 @@ module.exports = {
         log: 1,
         campaignName: 1,
         logTime: 1,
-        rule: 1
+        rule: 1,
+        promote: 1,
+        createdAt: 1
       }
     )
     .populate({
@@ -83,6 +101,7 @@ module.exports = {
       if(result) {
         let newRule = result.rule;
         newRule['companyName'] = result.campaignName;
+        newRule['createdAt'] = result.createdAt;
         newRule['logTime'] = result.logTime;
         return newRule;
       } else {
@@ -161,9 +180,17 @@ module.exports = {
             query: {
               "bool": {
                 "must": [
-                  { "match": { "json.value.source.url.hostname": host }},
+                  {
+                    "bool": {
+                      "should": [
+                        { "match": { "json.value.source.url.hostname": host }},
+                        { "match": { "json.value.source.url.hostname": `www.${host}` }},
+                      ],
+                    }
+                  },
+                  // { "match": { "json.value.source.url.hostname": host }},
                   { "match": { "json.value.trackingId":  trackingId }},
-                  { "range": { "@timestamp": { "gte": moment().subtract(15, 'minutes').format(), "lt": moment().format() }}}
+                  { "range": { "@timestamp": { "gte": moment().subtract(60, 'minutes').format(), "lt": moment().format() }}}
                 ]
               }
             },
@@ -193,7 +220,15 @@ module.exports = {
       case 'identification' :
         let identificationQuery = !limit ?
           [
-            { "match": { "host.keyword": host }},
+            {
+              "bool": {
+                "should": [
+                  { "match": { "host.keyword": host }},
+                  { "match": { "host.keyword": `www.${host}` }},
+                ],
+              }
+            },
+            // { "match": { "host.keyword": host }},
             { "match": { "trackingId.keyword":  trackingId }},
             { "range":
               { "timestamp":
@@ -232,7 +267,15 @@ module.exports = {
       case 'journey' :
         let mustQuery = !limit ?
           [
-            { "match": { "host.keyword": host }},
+            {
+              "bool": {
+                "should": [
+                  { "match": { "host.keyword": host }},
+                  { "match": { "host.keyword": `www.${host}` }},
+                ],
+              }
+            },
+            // { "match": { "host.keyword": host }},
             { "match": { "trackingId.keyword":  trackingId }},
             { "range":
               { "timestamp":
@@ -264,7 +307,7 @@ module.exports = {
             "sort" : [
               { "timestamp" : {"order" : "desc", "mode" : "max"}}
             ],
-            "size": limit?10000:Number(configuration.panelStyle.recentNumber)
+            "size": 10000
           }
         };
         break;
@@ -287,7 +330,10 @@ module.exports = {
       if(type == 'journey' || type == 'identification') {
         if(response.hits && response.hits.hits.length) {
           await response.hits.hits.map(details => {
-            userDetails.push(details._source);
+            let source = details._source;
+            source['_id'] = details._id;
+            source['type'] = details._type;
+            userDetails.push(source);
           });
 
           /**
@@ -298,19 +344,23 @@ module.exports = {
           }
 
           userDetails = await userDetails.filter(user => user.trackingId === trackingId);
-          userDetails = await userDetails.filter((user, index, self) => self.findIndex(t => t.email === user.email) === index);
+          userDetails = await userDetails.filter((user, index, self) => self.findIndex(t => t.email && user.email?t.email === user.email:t.username === user.username) === index);
+
+          if(type == 'journey' && !limit)
+            userDetails = userDetails.slice(0, Number(configuration.panelStyle.recentNumber));
+
           userDetails.sort(sortByDateAsc);
 
           if(!userDetails.length)
             return { response, rule, configurations };
           return { response, rule, configurations, userDetails };
         } else {
-          return { response, rule, configurations }
+          return { response, rule, configurations };
         }
       } else
         return { response, rule, configurations };
     } else {
-      return { error: "Tracking Id not found" };
+      return { error: "Tracking Id Not Found" };
     }
   },
 
@@ -401,7 +451,7 @@ module.exports = {
     return response;
   },
 
-  validatePath: async (index, trackingId, path) => {
+  getAllUniqueClick: async (index, trackingId) => {
     const query = {
       index: index,
       body: {
@@ -409,7 +459,39 @@ module.exports = {
           "bool": {
             "must": [
               { "match": { "json.value.trackingId":  trackingId }},
-              { "match": { "json.value.source.url.pathname":  path }},
+              { "match": { "json.value.event":  'click' }}
+            ]
+          }
+        },
+        "size": 0
+      }
+    };
+
+    const response = await new Promise((resolve, reject) => {
+     client.search(query, function (err, resp, status) {
+        if (err) reject(err);
+        else resolve(resp);
+      });
+    });
+
+    return response.hits?response.hits.total:0;
+  },
+
+  validatePath: async (index, trackingId, path) => {
+    path = path.split('/').join('*');
+    const query = {
+      index: index,
+      body: {
+        query: {
+          "bool": {
+            "must": [
+              { "match": { "json.value.trackingId":  trackingId }},
+              {
+                "query_string" : {
+                  "default_field" : "json.value.source.url.pathname",
+                  "query" : `*${path}*`
+                }
+              },
               {
                 "range": {
                   "@timestamp": {
@@ -421,6 +503,9 @@ module.exports = {
             ]
           }
         },
+        "sort" : [
+            { "@timestamp" : {"order" : "desc" } }
+        ],
         "size": 1
       }
     };
@@ -599,5 +684,19 @@ module.exports = {
     });
 
     return await campaignConversionDetails;
+  },
+
+  deleteESUser: async (index, _id, _type) => {
+    const response =  await client.delete({
+      index: index,
+      type: _type,
+      id: _id
+    });
+
+    if(response && response.result == 'deleted')
+      return response;
+    else
+      return { error: true, message: 'User not found' };
   }
+
 }

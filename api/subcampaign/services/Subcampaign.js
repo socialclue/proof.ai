@@ -246,7 +246,7 @@ module.exports = {
     // Note: The current method will return the full response of Mongo.
     // To get the updated object, you have to execute the `findOne()` method
     // or use the `findOneOrUpdate()` method with `{ new:true }` option.
-    const data = await Subcampaign.findOneAndUpdate(params, values, { multi: true });
+    const data = await Subcampaign.findOneAndUpdate(params, values, { multi: true, new: true });
     return Subcampaign.find({campaign: data.campaign});
   },
 

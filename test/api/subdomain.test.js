@@ -1,5 +1,5 @@
 /**
- * Test Campaign Services !
+ * Test Subdomain Services !
  * @type {"assert".internal | ((value: any, message?: string) => void)}
  */
 
@@ -9,7 +9,7 @@ const request = require('co-supertest');
 const uuid = require('uuid/v4');
 const email = `${uuid()}@test.com`;
 const password = uuid();
-var Token, profile, user, campaign;
+var Token, user, campaign, profile, subdomain;
 
 /**
  * Test the login user
@@ -55,36 +55,64 @@ var Token, profile, user, campaign;
  * Test Create Campaign
  **/
   describe('campaign creation test', () => {
-    it('it should create campaign with configuration and rules', function *() {
+      it('it should create campaign with configuration and rules', function *() {
+        yield request(strapi.config.url)
+        .post('/campaign')
+        .set('Authorization', `Bearer ${Token}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({
+          campaign: {
+            websiteUrl: 'servicebot.useinfluence.co',
+            campaignName: 'Acme1',
+            profile: profile._id
+          }
+        })
+        .expect(201)
+        .expect('Content-Type', /json/)
+        .then((data, err) => {
+          if(data.error)
+            throw data.error;
+          campaign = data.body.data;
+        });
+      });
+    });
+
+
+/**
+  * Create User subdomain
+  **/
+  describe('create user subdomain', () => {
+    it('it should create user`s subdomain', function *() {
       yield request(strapi.config.url)
-      .post('/campaign')
+      .post('/subdomain')
       .set('Authorization', `Bearer ${Token}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send({
-        campaign: {
-          websiteUrl: 'servicebot.useinfluence.co',
-          campaignName: 'Acme1',
-          profile: profile._id
-        }
+        type: 'subdomain',
+        trackingId: campaign.trackingId,
+        campaign: campaign._id,
+        domainUrl: 'http://localhost:1337/',
       })
       .expect(201)
       .expect('Content-Type', /json/)
       .then((data, err) => {
         if(data.error)
           throw data.error;
-        campaign = data.body.data;
+        subdomain = data.body[0];
+        console.log(subdomain);
       });
     });
   });
 
 /**
- * Test Get User Campaigns
+ * Test Get User Profile
  **/
-  describe('campaign find all campaigns test', () => {
-    it('it should get all users campaign', function *() {
+  describe('find user`s subdomain', () => {
+    it('it should get user`s subdomain', function *() {
       yield request(strapi.config.url)
-      .get(`/campaign`)
+      .get(`/subdomain`)
       .set('Authorization', `Bearer ${Token}`)
       .expect(200)
       .expect('Content-Type', /json/)
@@ -96,12 +124,12 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Get One Campaigns
+ * Test Get One Subdomain
  **/
-  describe('campaign find one campaign test', () => {
-    it('it should get one campaign', function *() {
+  describe('find one subdomain test', () => {
+    it('it should get one subdomain', function *() {
       yield request(strapi.config.url)
-      .get(`/campaign/${campaign._id}`)
+      .get(`/subdomain/${subdomain._id}`)
       .set('Authorization', `Bearer ${Token}`)
       .expect(200)
       .expect('Content-Type', /json/)
@@ -113,17 +141,17 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Edit Campaign
+ * Test Edit User Subdomain
  **/
-  describe('campaign update test', () => {
-    it('it should update campaign', function *() {
+  describe('subdomain update test', () => {
+    it('it should update user`s subdomain', function *() {
       yield request(strapi.config.url)
-      .put(`/campaign/${campaign._id}`)
+      .put(`/subdomain/${subdomain._id}`)
       .set('Authorization', `Bearer ${Token}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send({
-        isActive: false
+        productName: 'New Product'
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -131,6 +159,25 @@ var Token, profile, user, campaign;
         if(data.error)
           throw data.error;
       });
+    });
+  });
+
+/**
+  * Test Delete Subdomain
+  **/
+  describe('subdomain deletion test', () => {
+    it('it should delete subdomain', function *() {
+      yield request(strapi.config.url)
+        .delete(`/subdomain/${subdomain._id}`)
+        .set('Authorization', `Bearer ${Token}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((data, err) => {
+          if(data.error)
+            throw data.error;
+        });
     });
   });
 
@@ -141,6 +188,25 @@ var Token, profile, user, campaign;
     it('it should delete campaign with configuration and rules', function *() {
       yield request(strapi.config.url)
         .delete(`/campaign/${campaign._id}`)
+        .set('Authorization', `Bearer ${Token}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((data, err) => {
+          if(data.error)
+            throw data.error;
+        });
+    });
+  });
+
+/**
+  * Test Delete Profile
+  **/
+  describe('profile deletion test', () => {
+    it('it should delete profile', function *() {
+      yield request(strapi.config.url)
+        .delete(`/profile/${profile._id}`)
         .set('Authorization', `Bearer ${Token}`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')

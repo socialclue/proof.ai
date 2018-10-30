@@ -1,5 +1,5 @@
 /**
- * Test Campaign Services !
+ * Test Code Services !
  * @type {"assert".internal | ((value: any, message?: string) => void)}
  */
 
@@ -9,7 +9,7 @@ const request = require('co-supertest');
 const uuid = require('uuid/v4');
 const email = `${uuid()}@test.com`;
 const password = uuid();
-var Token, profile, user, campaign;
+var Token, user, code;
 
 /**
  * Test the login user
@@ -34,57 +34,38 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Get User Profile
- **/
-  describe('find user`s profile test', () => {
-    it('it should get user`s profile', function *() {
+  * Create User code
+  **/
+  describe('create user code', () => {
+    it('it should create user`s code', function *() {
       yield request(strapi.config.url)
-      .get(`/profile`)
-      .set('Authorization', `Bearer ${Token}`)
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .then((data, err) => {
-        if(data.error)
-          throw data.error;
-        profile = data.body;
-      });
-    });
-  });
-
-/**
- * Test Create Campaign
- **/
-  describe('campaign creation test', () => {
-    it('it should create campaign with configuration and rules', function *() {
-      yield request(strapi.config.url)
-      .post('/campaign')
+      .post('/code')
       .set('Authorization', `Bearer ${Token}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send({
-        campaign: {
-          websiteUrl: 'servicebot.useinfluence.co',
-          campaignName: 'Acme1',
-          profile: profile._id
-        }
+        value: '1212121212',
+        clientId: '23123123',
+        userId: "2018-09-15-T-15-52-19-002Z",
+        redirectUri: 'http://localhost:1337/redirect'
       })
       .expect(201)
       .expect('Content-Type', /json/)
       .then((data, err) => {
         if(data.error)
           throw data.error;
-        campaign = data.body.data;
+        code = data.body;
       });
     });
   });
 
 /**
- * Test Get User Campaigns
+ * Test Get User Profile
  **/
-  describe('campaign find all campaigns test', () => {
-    it('it should get all users campaign', function *() {
+  describe('find user`s code', () => {
+    it('it should get user`s code', function *() {
       yield request(strapi.config.url)
-      .get(`/campaign`)
+      .get(`/code`)
       .set('Authorization', `Bearer ${Token}`)
       .expect(200)
       .expect('Content-Type', /json/)
@@ -96,12 +77,12 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Get One Campaigns
+ * Test Get One Code
  **/
-  describe('campaign find one campaign test', () => {
-    it('it should get one campaign', function *() {
+  describe('find one code test', () => {
+    it('it should get one code', function *() {
       yield request(strapi.config.url)
-      .get(`/campaign/${campaign._id}`)
+      .get(`/code/${code._id}`)
       .set('Authorization', `Bearer ${Token}`)
       .expect(200)
       .expect('Content-Type', /json/)
@@ -113,17 +94,18 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Edit Campaign
+ * Test Edit User Code
  **/
-  describe('campaign update test', () => {
-    it('it should update campaign', function *() {
+  describe('code update test', () => {
+    it('it should update user`s code', function *() {
       yield request(strapi.config.url)
-      .put(`/campaign/${campaign._id}`)
+      .put(`/code/${code._id}`)
       .set('Authorization', `Bearer ${Token}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send({
-        isActive: false
+        status: 'completed',
+        withdrawn: true
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -135,12 +117,12 @@ var Token, profile, user, campaign;
   });
 
 /**
-  * Test Delete Campaign
+  * Test Delete Code
   **/
-  describe('campaign deletion test', () => {
-    it('it should delete campaign with configuration and rules', function *() {
+  describe('code deletion test', () => {
+    it('it should delete code', function *() {
       yield request(strapi.config.url)
-        .delete(`/campaign/${campaign._id}`)
+        .delete(`/code/${code._id}`)
         .set('Authorization', `Bearer ${Token}`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')

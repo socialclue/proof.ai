@@ -9,6 +9,8 @@
  const bcrypt = require('bcryptjs');
  const schedule = require('node-schedule');
  const moment = require('moment');
+
+
  /**
  * Function for http requests
  *
@@ -31,6 +33,42 @@ function doRequest(options) {
   });
 }
 
+/**
+* Function for campaign check
+*
+*@param{{user, callback}}
+*@return {Promise}
+*/
+const campaignChecker = async (user, done) => {
+  if(user && user._id) {
+    const profile = await Profile.findOne({user: user?user._id:null});
+    if(profile && profile._id) {
+      const campaigns = await Campaign.find({profile: profile?profile._id:null});
+      if(campaigns && campaigns.length) {
+        let checkActive = 0;
+        campaigns.map(async campaign => {
+          await strapi.services.elasticsearch.query('filebeat-*', campaign.trackingId).then(res=>{
+            if(res.hits && res.hits.hits && res.hits.hits.length)
+              checkActive++;
+          });
+        });
+        if(!checkActive) {
+          await strapi.plugins.email.services.email.singlePointContact(user.email, user.username);
+          done('No Campaign Found');
+        } else {
+          done(null);
+        }
+      } else {
+        await strapi.plugins.email.services.email.singlePointContact('shankyrana@hotmail.com', user.username);
+        done('Campaign Not Found');
+      }
+    } else {
+      done('Profile Not Found');
+    }
+  } else {
+    done('User Not Found');
+  }
+}
 
 module.exports = {
   // Before saving a value.
@@ -88,13 +126,12 @@ module.exports = {
         Authorization: 'JWT ' + JSON.parse(token).token,
         'Content-Type': 'application/json'
       }});
-
       //parse and save servicebot's new user's details to db
       userDetails = userDetails?JSON.parse(userDetails):[];
       if(userDetails.length)
         model.servicebot = {
           client_id: userDetails[0].id,
-          status: userDetails[0].status,
+          status: userDetails[0].status
         }
     } catch(error) {
       const err = {
@@ -146,9 +183,15 @@ module.exports = {
       },
       user: result._id
     };
-    console.log(state, '===============state');
     //Create new state for new user
     strapi.api.state.services.state.add(state);
+    let oldDate = new Date();
+    await strapi.config.functions.kue.createJob(result.email, 'Campaign creation check', 'Checks whether the users has created campaign after two days or not and hits th mail.', result, 'medium', 1, new Date(oldDate.getTime() + 3*24*60*60000),function(err) {
+      if(err)
+        console.log(err);
+      else
+        strapi.config.functions.kue.processJobs(result.email, 1, campaignChecker);
+    });
   },
 
   // Before updating a value.

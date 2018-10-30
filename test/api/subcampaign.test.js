@@ -1,5 +1,5 @@
 /**
- * Test Campaign Services !
+ * Test Subcampaign Services !
  * @type {"assert".internal | ((value: any, message?: string) => void)}
  */
 
@@ -9,7 +9,7 @@ const request = require('co-supertest');
 const uuid = require('uuid/v4');
 const email = `${uuid()}@test.com`;
 const password = uuid();
-var Token, profile, user, campaign;
+var Token, user, campaign, profile, subcampaign;
 
 /**
  * Test the login user
@@ -55,36 +55,64 @@ var Token, profile, user, campaign;
  * Test Create Campaign
  **/
   describe('campaign creation test', () => {
-    it('it should create campaign with configuration and rules', function *() {
+      it('it should create campaign with configuration and rules', function *() {
+        yield request(strapi.config.url)
+        .post('/campaign')
+        .set('Authorization', `Bearer ${Token}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .send({
+          campaign: {
+            websiteUrl: 'servicebot.useinfluence.co',
+            campaignName: 'Acme1',
+            profile: profile._id
+          }
+        })
+        .expect(201)
+        .expect('Content-Type', /json/)
+        .then((data, err) => {
+          if(data.error)
+            throw data.error;
+          campaign = data.body.data;
+        });
+      });
+    });
+
+
+/**
+  * Create User subcampaign
+  **/
+  describe('create user subcampaign', () => {
+    it('it should create user`s subcampaign', function *() {
       yield request(strapi.config.url)
-      .post('/campaign')
+      .post('/subcampaign')
       .set('Authorization', `Bearer ${Token}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send({
-        campaign: {
-          websiteUrl: 'servicebot.useinfluence.co',
-          campaignName: 'Acme1',
-          profile: profile._id
-        }
+        campaign: campaign._id,
+        name: 'Name',
+        productName: "Product",
+        productUrl: 'http://localhost:1337/',
+        captureUrl: 'http://localhost:1337/'
       })
       .expect(201)
       .expect('Content-Type', /json/)
       .then((data, err) => {
         if(data.error)
           throw data.error;
-        campaign = data.body.data;
+        subcampaign = data.body;
       });
     });
   });
 
 /**
- * Test Get User Campaigns
+ * Test Get User Profile
  **/
-  describe('campaign find all campaigns test', () => {
-    it('it should get all users campaign', function *() {
+  describe('find user`s subcampaign', () => {
+    it('it should get user`s subcampaign', function *() {
       yield request(strapi.config.url)
-      .get(`/campaign`)
+      .get(`/subcampaign`)
       .set('Authorization', `Bearer ${Token}`)
       .expect(200)
       .expect('Content-Type', /json/)
@@ -96,12 +124,12 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Get One Campaigns
+ * Test Get One Subcampaign
  **/
-  describe('campaign find one campaign test', () => {
-    it('it should get one campaign', function *() {
+  describe('find one subcampaign test', () => {
+    it('it should get one subcampaign', function *() {
       yield request(strapi.config.url)
-      .get(`/campaign/${campaign._id}`)
+      .get(`/subcampaign/${subcampaign._id}`)
       .set('Authorization', `Bearer ${Token}`)
       .expect(200)
       .expect('Content-Type', /json/)
@@ -113,17 +141,17 @@ var Token, profile, user, campaign;
   });
 
 /**
- * Test Edit Campaign
+ * Test Edit User Subcampaign
  **/
-  describe('campaign update test', () => {
-    it('it should update campaign', function *() {
+  describe('subcampaign update test', () => {
+    it('it should update user`s subcampaign', function *() {
       yield request(strapi.config.url)
-      .put(`/campaign/${campaign._id}`)
+      .put(`/subcampaign/${subcampaign._id}`)
       .set('Authorization', `Bearer ${Token}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .send({
-        isActive: false
+        productName: 'New Product'
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -131,6 +159,25 @@ var Token, profile, user, campaign;
         if(data.error)
           throw data.error;
       });
+    });
+  });
+
+/**
+  * Test Delete Subcampaign
+  **/
+  describe('subcampaign deletion test', () => {
+    it('it should delete subcampaign', function *() {
+      yield request(strapi.config.url)
+        .delete(`/subcampaign/${subcampaign._id}`)
+        .set('Authorization', `Bearer ${Token}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((data, err) => {
+          if(data.error)
+            throw data.error;
+        });
     });
   });
 
@@ -141,6 +188,25 @@ var Token, profile, user, campaign;
     it('it should delete campaign with configuration and rules', function *() {
       yield request(strapi.config.url)
         .delete(`/campaign/${campaign._id}`)
+        .set('Authorization', `Bearer ${Token}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then((data, err) => {
+          if(data.error)
+            throw data.error;
+        });
+    });
+  });
+
+/**
+  * Test Delete Profile
+  **/
+  describe('profile deletion test', () => {
+    it('it should delete profile', function *() {
+      yield request(strapi.config.url)
+        .delete(`/profile/${profile._id}`)
         .set('Authorization', `Bearer ${Token}`)
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')

@@ -8,8 +8,22 @@
 
 // Public dependencies.
 const _ = require('lodash');
-const otplib =  require('otplib');
+// const authenticator =  require('otplib/authenticator');
 const secret = 'HSGDHGSJHDBJDYIDUAHJAHDUDHSUDHJSDHJK'
+// const crypto = require('crypto');
+const otplib = require('otplib');
+const moment = require('moment');
+// authenticator.options = { crypto };
+// hotp.options = { crypto };
+
+// const HOTP = hotp.HOTP;
+
+const validateAccountOtp = async (requestToken, token) => {
+  if(requestToken.token == token && moment(requestToken.expiry) > moment())
+    return true;
+  else
+    return false;
+};
 
 module.exports = {
 
@@ -114,6 +128,16 @@ module.exports = {
    // Note: To get the full response of Mongo, use the `remove()` method
    // or add spent the parameter `{ passRawResult: true }` as second argument.
     const token = await otplib.authenticator.generate(secret);
+    const userParams = {
+      id: user._id
+    };
+    const userValues = {
+      accountRequestToken: {
+        token: token,
+        expiry: moment().add(5, 'minutes').format()
+      }
+    };
+    await strapi.plugins['users-permissions'].services.user.edit(userParams, userValues);
     await strapi.plugins.email.services.email.accountRequest(user.email, user.username, token, params.type);
 
     return { error: false, status: 200, msg: 'Mail sent' };
@@ -127,27 +151,33 @@ module.exports = {
   processAccountRequest: async (user, body) => {
    // Note: To get the full response of Mongo, use the `remove()` method
    // or add spent the parameter `{ passRawResult: true }` as second argument.
-    const isValid = otplib.authenticator.check(body.otpCode, secret);
+    if(user && user.accountRequestToken) {
+      const isValid = await validateAccountOtp(user.accountRequestToken, body.otpCode);
 
-    if(isValid && (body.type == 'pause' || body.type == 'running')) {
-      const userParams = {
-        id: user._id
-      };
-      if(body.type == "pause")
-        await Campaign.update({profile: user.profile}, {$set: { isActive: false }}, { multi: true });
-      const userValues = {
-        status: body.type == "pause"?"paused":body.type=="running"?"running":"deleted"
-      };
-      await strapi.plugins['users-permissions'].services.user.edit(userParams, userValues);
-    } else if(isValid && body.type == 'delete') {
+      if(isValid && (body.type == 'paused' || body.type == 'running')) {
+        const userParams = {
+          id: user._id
+        };
+        if(body.type == "paused")
+          await Campaign.update({profile: user.profile}, {$set: { isActive: false }}, { multi: true });
+        const userValues = {
+          status: body.type == "paused"?"running":body.type=="running"?"paused":"deleted",
+          accountRequestToken: {}
+        };
+        await strapi.plugins['users-permissions'].services.user.edit(userParams, userValues);
+      } else if(isValid && body.type == 'delete') {
 
-      const userParams = {
-        id: user._id
-      };
+        const userParams = {
+          id: user._id
+        };
 
-      await strapi.plugins['users-permissions'].services.user.remove(userParams, user);
+        await strapi.plugins['users-permissions'].services.user.remove(userParams, user);
+      }
+
+      return { code: isValid, error: false, status: 200 } ;
+    } else {
+      return { code: false, error: true, status: 400 } ;
     }
 
-    return { code: isValid, error: false, status: 200 } ;
   }
 };

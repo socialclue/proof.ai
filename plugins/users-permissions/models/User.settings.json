@@ -42,6 +42,11 @@
       "configurable": false,
       "private": true
     },
+    "accountRequestToken": {
+      "type": "json",
+      "configurable": false,
+      "private": true
+    },
     "role": {
       "model": "role",
       "via": "users",
@@ -88,6 +93,10 @@
       "multiple": false
     },
     "affiliatedById": {
+      "type": "string",
+      "multiple": false
+    },
+    "apiKey": {
       "type": "string",
       "multiple": false
     }

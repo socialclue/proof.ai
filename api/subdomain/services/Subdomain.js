@@ -77,8 +77,15 @@ module.exports = {
   remove: async params => {
     // Note: To get the full response of Mongo, use the `remove()` method
     // or add spent the parameter `{ passRawResult: true }` as second argument.
-    const data = await Subdomain.findOneAndRemove(params, {});
-
-    return data;
+    let notificationPaths, type;
+    const data = await Subdomain.findOneAndRemove(params, {})
+    .populate('campaign')
+    .exec()
+    .then(async data => {
+      await Notificationpath.remove({domain: data.domainUrl});
+      type = data.type;
+      notificationPaths = await Notificationpath.find({rule:data.campaign?data.campaign.rule:null, type: data.type});
+    });
+    return { data, type, notificationPaths };
   }
 };

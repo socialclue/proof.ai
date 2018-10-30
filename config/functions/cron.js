@@ -14,7 +14,7 @@
  const uuidv1 = require('uuid/v1');
 
  const client = elasticsearch.Client({
-   host: '10.15.254.94:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
+   host: '104.196.139.231:9200', // Remove this Should get it from the strapi.config.elasticsearchNode
    requestTimeout: Infinity, // Tested
    keepAlive: true, // Tested
    log: 'trace'

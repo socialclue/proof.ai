@@ -57,6 +57,14 @@
       }
     },
     {
+      "method": "POST",
+      "path": "/payment/servicebot/update",
+      "handler": "Payment.updatePlan",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "PUT",
       "path": "/payment/:_id",
       "handler": "Payment.update",
