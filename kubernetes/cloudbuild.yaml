@@ -41,7 +41,7 @@ steps:
       - |
         export KUBECONFIG=kubeconfig
         kubectl apply -f ./kubernetes/github-influenceio-deployment.yaml
-        kubectl set image deployment/github-influenceio-development github-influenceio-development=gcr.io/influence-197607/github-influenceio:${COMMIT_SHA}
+        kubectl set image deployment/github-influenceio-development github-influenceio-development=gcr.io/influence-197607/github-influenceio-development:${COMMIT_SHA}
         kubectl apply -f ./kubernetes/github-influenceio-service.yaml
     volumes:
       - name: 'kube'
