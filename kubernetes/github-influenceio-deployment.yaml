@@ -2,28 +2,28 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: github-influenceio
-  name: github-influenceio
+    app: github-influenceio-development
+  name: github-influenceio-development
   namespace: default
 spec:
   selector:
     matchLabels:
-      app: github-influenceio
+      app: github-influenceio-development
       version: v1
   template:
     metadata:
       labels:
-        app: github-influenceio
+        app: github-influenceio-development
         version: v1
     spec:
       containers:
-      - image: gcr.io/influence-197607/github-influenceio:latest
-        name: github-influenceio
+      - image: gcr.io/influence-197607/github-influenceio-development:latest
+        name: github-influenceio-development
         ports:
         - containerPort: 80
         env:
-        - name: DATABASE_HOST
-          value: db-service
+        - name: NODE_ENV
+          value: development
         - name: REDIS_HOST
           value: "35.237.30.58"
         - name: SENDGRID_API_KEY
