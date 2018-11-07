@@ -91,18 +91,34 @@ const redisStruct =
       auth: strapi.config.redisPassword,
       db: strapi.config.redisDb, // if provided select a non-default redis db
       options: {
-        retryStrategy: function (times) {
-          var delay = Math.min(times * 50, 2000);
-          return delay;
-        }
+        retryStrategy: _retryStrategy(),
+        maxRedirections: 20,
+        retryDelayOnFailover   : 100,
+        retryDelayOnClusterDown: 100,
+        retryDelayOnTryAgain   : 100,
+
       }
     };
+
+function _retryStrategy(times) {
+  let retry;
+
+  if (times === 1) {
+    retry = 1;  // immediate retry
+  } else {
+    retry = Math.min((times - 1) * 2000, 20000);
+  }
+  return retry;
+}
 
 const q = kue.createQueue({
   prefix: 'q',
   redis: redisStruct
 });
 
+q.on( 'error', function( err ) {
+  console.log( 'Oops... ', err );
+});
 
 // kue.app.listen(3002);
 
