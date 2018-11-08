@@ -92,7 +92,7 @@ const redisStruct =
       db: strapi.config.redisDb, // if provided select a non-default redis db
       options: {
         retryStrategy: _retryStrategy(),
-        maxRedirections: 20,
+        maxRedirections: 2000,
         retryDelayOnFailover   : 100,
         retryDelayOnClusterDown: 100,
         retryDelayOnTryAgain   : 100,
