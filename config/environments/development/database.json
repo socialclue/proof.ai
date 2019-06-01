@@ -5,7 +5,7 @@
       "connector": "strapi-mongoose",
       "settings": {
         "client": "mongo",
-        "uri": "mongodb://shanky:sk%409910154268@influence-shard-00-00-7wfmn.gcp.mongodb.net:27017,influence-shard-00-01-7wfmn.gcp.mongodb.net:27017,influence-shard-00-02-7wfmn.gcp.mongodb.net:27017/test?ssl=true&replicaSet=Influence-shard-0&authSource=admin"
+        "uri": "mongodb://localhost:27017/prod"
       },
       "options": {}
     }

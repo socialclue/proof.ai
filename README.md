@@ -1,4 +1,4 @@
-# Social Proof : UseInfluence to Dhain Se
+# Social Proof : UseInfluence to Dhain Se oh धाएं से.
 
 ### What is social proof?
 
@@ -15,11 +15,12 @@ It all started with UseInfluence a fork of Dhain se, after certain disagreement 
 
 ### What is dhain.se
 
+धाएं स : it means be fast , its a slang used in Indian household, do it faster.
 
-Our mission is to bring data transparency to parties involved.
-
+Our mission is to bring data transparency.
 We are building an AI powered social media analytics tool for next generation.
 
+Complete open source SAAS API for you to build something around related to customer onboarding धाएं स.
 
 
 
