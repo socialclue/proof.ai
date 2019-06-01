@@ -1,47 +1,72 @@
-# Proof : UseInfluence
+# Social Proof : UseInfluence to Dhain Se
 
-Our mission is to bring data transparency to consumer involved.
+### What is social proof?
+
+We as human take pride in validation, like the clothes we wear or the car we drive, we want others to know and follow what we did or at least repeat the same. Following the herd or crowd where you end
+up buying a product or giving in as a lead is social proof.
+
+According to the principle of social proof, one way that individuals determine appropriate behavior for themselves in a situation is to examine the behavior of others there, especially similar to others . As a consequence, people tend to behave as their friends and peers have behaved.
 
 
-[![codebeat badge](https://codebeat.co/badges/14c00570-434e-48e2-aae9-04f15670d299)](https://codebeat.co/projects/github-com-influenceio-influence-io-master)
+### How it started
 
-[![CircleCI](https://circleci.com/gh/InfluenceIO/influence.io.svg?style=svg)](https://circleci.com/gh/InfluenceIO/influence.io)
+It all started with UseInfluence a fork of Dhain se, after certain disagreement over the product philosophy.
 
-[![Build Status](https://semaphoreci.com/api/v1/ramanparashar/influence-io-2/branches/master/badge.svg)](https://semaphoreci.com/ramanparashar/influence-io-2)
+
+### What is dhain.se
+
+
+Our mission is to bring data transparency to parties involved.
 
 We are building an AI powered social media analytics tool for next generation.
+
+
+
+
+[![codebeat badge](r)
+
+[![CircleCI]()]()
+
+[![Build Status]()]()
+
+
 
 ## Introduction
 
 - Use influence allows website owners to increase website conversion using social proof  methods.
-- Live activity notifications 
+- Live activity notifications
 - Live visitor count
 - Visitor identification
 - Customer journey / path
+- Deep integration
+- Incentive Compatible
+-
 
 ## Providing configuration on the above methods as below
 
-- Provide custom timing 
+- Provide custom timing
 - Custom rules for sending notifications
 - Optimisation
 - Language
+- Machine recommendation
 
-## Tech Stack 
+## Tech Stack
 
 - NodeJS
 - Mongo
 - Strapi
-- Elastic Stack - Kibana and Logstash 
+- Elastic Stack - Kibana and Logstash
 - Deep Learning
- 
+- Economics
 
 
-### Development 
+
+### Development
 
 Install using npm.
 
 ```
-npm i 
+npm i
 npm run start-dev-backend
 npm run start-dev-frontend
 
@@ -55,7 +80,7 @@ cd docker
 docker-compose up -d  
 ```
 
-Once you are finished with above and everything seems alright time to fire 
+Once you are finished with above and everything seems alright time to fire
 
 ```
 npm run start
@@ -73,12 +98,15 @@ Thanks
 
 
 ```
-Authors 
-   
+Authors
+
    Saransh Sharma
    Shanky Rana
-   
-Founders
-   Raman Parashar , Kirti Prakash 
- ```
 
+Old Founders
+   Raman Parashar , Kirti Prakash, Saransh Sharma
+
+New Founder
+   Saransh Sharma , Anurag Garg
+
+ ```
