@@ -8,11 +8,15 @@
 
 
 
+require('dotenv').load();
+
 module.exports = async cb => {
+// We write test for every function we write or implement first hand .
 
+// This function will check the .env file and at some contents, and then if it does not exist, we create one with some default settings
   const checkEnvFile = function() {
-    if (checkFile){
-
+    if (process.env != null){
+      console.log("No env file")
     }
 
   }
@@ -35,6 +39,10 @@ module.exports = async cb => {
   }
 
   const checkFile(){
+
+  }
+  // This creates the default ENV variables which we have right now, and as we increment , we put this in as part of configs.
+  const createDefault(){
 
   }
 
