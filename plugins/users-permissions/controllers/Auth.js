@@ -385,13 +385,11 @@ module.exports = {
       // } catch(err) {
       //   strapi.log.error(err);
       // }
-      console.log(user);
       ctx.send({
         user: _.omit(user.toJSON ? user.toJSON() : user, ['password', 'resetPasswordToken']),
         jwt
       });
     } catch(err) {
-      console.log(err);
       const adminError = _.includes(err.message, 'username') ? 'Auth.form.error.username.taken' : 'Auth.form.error.email.taken';
       ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: adminError }] }] : err.message);
     }

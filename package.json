@@ -79,6 +79,7 @@
     "purest": "^2.0.1",
     "rand-token": "^0.4.0",
     "request": "^2.83.0",
+    "shelljs": "^0.8.3",
     "shortid": "^2.2.13",
     "strapi": "3.0.0-alpha.12.7",
     "strapi-generate": "3.0.0-alpha.12.7",

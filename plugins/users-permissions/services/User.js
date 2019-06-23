@@ -10,6 +10,7 @@
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 const request = require('request');
+const url = 'http://157.230.189.100';
 
 function doRequest(options) {
   return new Promise(function (resolve, reject) {
@@ -130,7 +131,7 @@ module.exports = {
       await strapi.plugins['content-manager'].services['contentmanager'].delete(params, {source: 'users-permissions'});
     }
 
-    var token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: user.email, password: user.password }});
+    var token = await doRequest({method: 'POST', url:url + '/api/v1/auth/token', form: { email: user.email, password: user.password }});
     var response;
     if(token.error)
       return { err: true, message: token.message };
@@ -147,7 +148,7 @@ module.exports = {
       if(payment_info)
         response = await doRequest({
           method: 'DELETE',
-          url:`https://servicebot.useinfluence.co/service-instances/${payment_info.service_id}`,
+          url:url + `/service-instances/${payment_info.service_id}`,
           headers: {
             Authorization: 'JWT ' + JSON.parse(auth_token).token,
             'Content-Type': 'application/json'
@@ -157,7 +158,7 @@ module.exports = {
         return { err: true, message: response.message };
       await doRequest({
         method: 'DELETE',
-        url:`https://servicebot.useinfluence.co/api/v1/users/${user.servicebot.client_id}`,
+        url:url + `/api/v1/users/${user.servicebot.client_id}`,
         headers: {
           Authorization: 'JWT ' + JSON.parse(token).token,
           'Content-Type': 'application/json'

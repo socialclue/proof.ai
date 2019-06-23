@@ -5,7 +5,7 @@
       "connector": "strapi-mongoose",
       "settings": {
         "client": "mongo",
-        "uri": "mongodb://localhost:27017/prod"
+        "uri": "mongodb://0.0.0.0:27017/prod"
       },
       "options": {}
     }

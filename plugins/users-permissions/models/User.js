@@ -9,7 +9,7 @@
  const bcrypt = require('bcryptjs');
  const schedule = require('node-schedule');
  const moment = require('moment');
-
+ const url = 'http://157.230.189.100';
 
  /**
  * Function for http requests
@@ -118,11 +118,11 @@ module.exports = {
     };
     try {
       //create new user in servicebot
-      var data = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/users/register', form: user});
+      var data = await doRequest({method: 'POST', url:'http://157.230.189.100/api/v1/users/register', form: user});
       //retrieve auth token for new user
-      var token = await doRequest({method: 'POST', url:'https://servicebot.useinfluence.co/api/v1/auth/token', form: { email: model.email, password: user.password }});
+      var token = await doRequest({method: 'POST', url:'http://157.230.189.100/api/v1/auth/token', form: { email: model.email, password: user.password }});
       //retrieve new user's details from servicebot
-      var userDetails = await doRequest({method: 'GET', url:'https://servicebot.useinfluence.co/api/v1/users/own', headers: {
+      var userDetails = await doRequest({method: 'GET', url:'http://157.230.189.100/api/v1/users/own', headers: {
         Authorization: 'JWT ' + JSON.parse(token).token,
         'Content-Type': 'application/json'
       }});
