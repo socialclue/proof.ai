@@ -1,4 +1,4 @@
-# Social Proof : UseInfluence to Dhain Se oh धाएं से.
+# Social Proof : UseInfluence to Dhain Se oh धाएं से and then proof.ai
 
 ### What is social proof?
 
@@ -13,9 +13,9 @@ According to the principle of social proof, one way that individuals determine a
 It all started with UseInfluence a fork of Dhain se, after certain disagreement over the product philosophy.
 
 
-### What is dhain.se
+### What is proof.ai
 
-धाएं स : it means be fast , its a slang used in Indian household, do it faster.
+Proof(dot).ai is proof based on machine learning and sophisticated  level of data science.
 
 Our mission is to bring data transparency.
 We are building an AI powered social media analytics tool for next generation.
